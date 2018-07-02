@@ -1,0 +1,35 @@
+{
+  "name": "axios/api-tool",
+  "description": "Api Http/Request/Response Tool",
+  "version": "1.0.0",
+  "keywords": [
+    "api",
+    "curl",
+    "http",
+    "response",
+    "request"
+  ],
+  "homepage": "https://github.com/AxiosCros/api-tool",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "AxiosLeo",
+      "email": "axiosleo@foxmail.com"
+    }
+  ],
+  "support": {
+    "issues": "https://github.com/AxiosCros/api-tool/issues"
+  },
+  "require": {
+    "php": ">=7.0",
+    "guzzlehttp/guzzle": "^6.3"
+  },
+  "require-dev": {
+    "composer/composer": "1.0.*@dev"
+  },
+  "autoload": {
+    "psr-4": {
+      "api\\tool\\": "src"
+    }
+  }
+}
