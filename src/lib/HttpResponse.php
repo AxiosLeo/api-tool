@@ -47,11 +47,11 @@ class HttpResponse
 
     public function getContent()
     {
-        if(is_object($this->body)){
+        if (is_object($this->body)) {
             $this->body = Parse::objectToArray($this->body);
         }
 
-        if(is_string($this->body)){
+        if (is_string($this->body)) {
             $this->body = Parse::jsonToArray($this->body);
         }
 

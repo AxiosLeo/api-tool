@@ -14,8 +14,9 @@ class Http extends HttpHelper
 {
     private static $instance;
 
-    public static function instance($options = []){
-        if(is_null(self::$instance)){
+    public static function instance($options = [])
+    {
+        if (is_null(self::$instance)) {
             self::$instance = new static($options);
         }
         return self::$instance;
