@@ -38,7 +38,7 @@ dump($param);
  */
 \api\tool\Response::instance('json')
     ->response('hello,world!');
-    
+
 ```
 
 
