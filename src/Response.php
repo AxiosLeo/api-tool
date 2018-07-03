@@ -38,9 +38,7 @@ class Response
     /**
      * @var array 输出参数
      */
-    protected $options = [
-        'all_to_string' => 1
-    ];
+    protected $options = [];
 
     /**
      * @var array 请求头
@@ -56,6 +54,11 @@ class Response
      * @var array 回调结果
      */
     protected $result = [];
+
+    /**
+     * @var bool 回调数组的所以元素全部转为string类型，方便应用端获取
+     */
+    protected $all_to_string = true;
 
     /**
      * @var Response
@@ -93,6 +96,22 @@ class Response
     }
 
     /**
+     * 回调配置
+     * @param $key
+     * @param string $value
+     * @return $this
+     */
+    public function setOptions($key, $value = '')
+    {
+        if (is_array($key)) {
+            $this->options = array_merge($this->options, $key);
+        } else {
+            $this->options[$key] = $value;
+        }
+        return $this;
+    }
+
+    /**
      * 异常情况下的请求结果
      * @param int $code
      * @param string $msg
@@ -113,14 +132,16 @@ class Response
     public function response($data = [], $code = 200, $msg = 'success', array $header = [])
     {
         $this->header($header);
+
         $this->setResult('code', $code)
             ->setResult('msg', $msg)
             ->setResult('time', $_SERVER['REQUEST_TIME'])
             ->setResult('data', $data);
 
-        if (!$this->options['all_to_string']) {
+        if ($this->all_to_string) {
             $this->result = Parse::allToString($this->result);
         }
+
         $this->result();
     }
 
@@ -128,7 +149,7 @@ class Response
      * 直接回调结果
      * @param string|array|null $data
      */
-    public function result($data = null)
+    protected function result($data = null)
     {
         if (is_null($data)) {
             $data = $this->result;
@@ -252,7 +273,7 @@ class Response
      * @param integer $code 状态码
      * @return $this
      */
-    public function setHttpCode($code)
+    public function code($code)
     {
         $this->code = $code;
         return $this;
