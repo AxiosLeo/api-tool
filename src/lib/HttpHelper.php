@@ -62,6 +62,9 @@ class HttpHelper
 
     public function setDomain($domain)
     {
+        if(false === strpos($domain , 'http')){
+            $domain = 'http://' . $domain;
+        }
         $this->domain = $domain;
         return $this;
     }
@@ -82,10 +85,6 @@ class HttpHelper
                 $this->domain = "https://" . $url['host'];
             }
 
-        }
-
-        if (false === strpos($this->domain, 'http')) {
-            $this->domain = 'http://' . $this->domain;
         }
 
         $client = new Client(['base_uri' => $this->domain]);
