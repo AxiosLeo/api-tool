@@ -34,13 +34,23 @@ class HttpHelper
             $this->setOption('headers', []);
         }
 
-        $this->options['headers'][$header_name] = $header_content;
+        if (is_array($header_name)) {
+            $this->options['headers'] = array_merge($this->options['headers'], $header_name);
+        } else {
+            $this->options['headers'][$header_name] = $header_content;
+        }
+
         return $this;
     }
 
-    public function setOption($key, $value)
+    public function setOption($key, $value = '')
     {
-        $this->options[$key] = $value;
+        if (is_array($key)) {
+            $this->options = array_merge($this->options, $key);
+        } else {
+            $this->options[$key] = $value;
+        }
+
         return $this;
     }
 
@@ -72,6 +82,10 @@ class HttpHelper
                 $this->domain = "https://" . $url['host'];
             }
 
+        }
+
+        if (false === strpos($this->domain, 'http')) {
+            $this->domain = 'http://' . $this->domain;
         }
 
         $client = new Client(['base_uri' => $this->domain]);
