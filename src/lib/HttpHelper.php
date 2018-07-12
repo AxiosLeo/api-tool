@@ -128,6 +128,7 @@ class HttpHelper
                 $str .= "&";
             }
             $str .= $k . '=' . rawurlencode($v);
+            $n++;
         }
         return $str;
     }
