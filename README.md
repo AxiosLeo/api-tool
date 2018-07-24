@@ -11,6 +11,10 @@ $response = \api\tool\Http::instance()
     ]);
 
 dump($response->getContent());
+// or $response->getData();
+
+//获取某一层级的数据
+dump($response->getData('data.yesterday.date'));
 ```
 
 
