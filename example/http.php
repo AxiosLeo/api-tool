@@ -15,4 +15,8 @@ $response = \api\tool\Http::instance()
         "city"=>'北京'
     ]);
 
+//get all data
 dump($response->getContent());
+// or $response->getData();
+
+dump($response->getData('data.yesterday.date'));
