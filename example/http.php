@@ -6,17 +6,36 @@
  * @datetime: 2018/7/3 11:51
  */
 
-require_once __DIR__ . '/base.php';
+namespace api\tool;
 
-$response = \api\tool\Http::instance()
+require_once __DIR__ . '/base.php';
+$options = [
+    'http_errors'     => false,
+    'connect_timeout' => 30,
+    'read_timeout'    => 80,
+    'urlencode'       => 1,
+    'format'          => 'array',  //array|json|xml
+];
+
+$response = Http::instance($options)
     ->setDomain("https://www.sojson.com")
     ->setMethod('GET')
     ->curl("open/api/weather/json.shtml",[
         "city"=>'北京'
     ]);
+dump($response->getData('data.yesterday.date'));
 
 //get all data
 dump($response->getContent());
 // or $response->getData();
 
-dump($response->getData('data.yesterday.date'));
+
+Http::clear();  // clear instance
+
+//OR
+/*Http::instance($options);
+Http::setHeader([]);
+Http::setDomain("https://www.sojson.com");
+Http::setMethod('GET');
+Http::setParam('city','北京');
+$response = Http::curl("open/api/weather/json.shtml");*/
