@@ -23,6 +23,8 @@ class HttpHelper
 
     private $domain = "";
 
+    private $param = [];
+
     public function __construct($options)
     {
         $this->options = array_merge($this->options, $options);
@@ -40,6 +42,16 @@ class HttpHelper
             $this->options['headers'][$header_name] = $header_content;
         }
 
+        return $this;
+    }
+
+    public function setParam($key, $value = null)
+    {
+        if (is_array($key)) {
+            $this->param = array_merge($this->param, $key);
+        } else {
+            $this->param[$key] = $value;
+        }
         return $this;
     }
 
@@ -62,7 +74,7 @@ class HttpHelper
 
     public function setDomain($domain)
     {
-        if(false === strpos($domain , 'http')){
+        if (false === strpos($domain, 'http')) {
             $domain = 'http://' . $domain;
         }
         $this->domain = $domain;
@@ -77,6 +89,8 @@ class HttpHelper
 
     public function curl($path = '', $data = [])
     {
+        $this->setParam($data);
+
         if (empty($this->domain) && false !== strpos($path, 'http')) {
             $url = parse_url($path);
             if ($url['scheme'] === 4) {
