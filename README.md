@@ -1,5 +1,9 @@
 ## 接口通信组件
 
+> `Request`和`Response` 基于thinkphp5的 Request 和 Response 重构而来
+
+> `Http` 是基于 GuzzleHttp 的封装
+
 ### 配置
 
 ``` php
@@ -9,8 +13,11 @@ $options = [
     'read_timeout'    => 80,
     'urlencode'       => 1,
     'format'          => 'array',  //array|json|xml
+    // or another guzzlehttp options
 ];
 ```
+
+> 更多配置项 -> [GuzzleHttp中文文档](http://guzzle-cn.readthedocs.io/zh_CN/latest/request-options.html)
 
 ---
 
