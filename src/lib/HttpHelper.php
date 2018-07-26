@@ -90,6 +90,7 @@ class HttpHelper
     public function curl($path = '', $data = [])
     {
         $this->setParam($data);
+        $data = $this->param;
 
         if (empty($this->domain) && false !== strpos($path, 'http')) {
             $url = parse_url($path);
