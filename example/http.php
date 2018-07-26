@@ -33,9 +33,11 @@ dump($response->getContent());
 Http::clear();  // clear instance
 
 //OR
-/*Http::instance($options);
+/*
+Http::instance($options);
 Http::setHeader([]);
 Http::setDomain("https://www.sojson.com");
 Http::setMethod('GET');
 Http::setParam('city','北京');
-$response = Http::curl("open/api/weather/json.shtml");*/
+$response = Http::curl("open/api/weather/json.shtml");
+*/
