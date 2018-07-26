@@ -4,7 +4,10 @@
 
 > `Http` 是基于 GuzzleHttp 的封装
 
-### 配置
+
+### Http 发送请求
+
+* 请求配置
 
 ``` php
 $options = [
@@ -19,9 +22,7 @@ $options = [
 
 > 更多配置项 -> [GuzzleHttp中文文档](http://guzzle-cn.readthedocs.io/zh_CN/latest/request-options.html)
 
----
-
-### Http 发送请求
+* 发送请求
 
 ```php
 $response = \api\tool\Http::instance()
