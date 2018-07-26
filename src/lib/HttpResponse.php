@@ -16,7 +16,7 @@ class HttpResponse
     private $body;
 
     private $status;
-    
+
     private $data;
 
     /**
@@ -69,20 +69,22 @@ class HttpResponse
      * @param string $key
      * @return array
      */
-    public function getData($key = null){
+    public function getData($key = null)
+    {
         $data = $this->getContent();
 
-        if(is_null($key)){
+        if (is_null($key)) {
             return $data;
         }
 
-        if(false !== strpos($key,'.')){
-            $keys = explode('.',$key);
-            $tmp = $data;
-            foreach ($keys as $k){
-                if(isset($tmp[$k])){
+        if (false !== strpos($key, '.')) {
+            $keys = explode('.', $key);
+            $tmp  = $data;
+            foreach ($keys as $k) {
+                if (isset($tmp[$k])) {
                     $tmp = $tmp[$k];
-                }else {
+                } else {
+                    $tmp = null;
                     break;
                 }
 
@@ -98,7 +100,7 @@ class HttpResponse
      */
     public function getContent()
     {
-        if(is_null($this->data)){
+        if (is_null($this->data)) {
             if (is_object($this->body)) {
                 $this->data = Parse::objectToArray($this->body);
             }
