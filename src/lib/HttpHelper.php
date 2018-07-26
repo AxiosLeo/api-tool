@@ -16,7 +16,8 @@ class HttpHelper
         'http_errors'     => false,
         'connect_timeout' => 30,
         'read_timeout'    => 80,
-        'format'          => 'array'  //array|json|xml
+        'urlencode'       => 1,
+        'format'          => 'array',  //array|json|xml
     ];
 
     private $method = "POST";
@@ -30,6 +31,11 @@ class HttpHelper
         $this->options = array_merge($this->options, $options);
     }
 
+    /**
+     * @param $header_name
+     * @param string $header_content
+     * @return $this
+     */
     public function setHeader($header_name, $header_content = '')
     {
         if (!isset($this->options['headers'])) {
@@ -45,6 +51,11 @@ class HttpHelper
         return $this;
     }
 
+    /**
+     * @param $key
+     * @param mixed $value
+     * @return $this
+     */
     public function setParam($key, $value = null)
     {
         if (is_array($key)) {
@@ -55,6 +66,11 @@ class HttpHelper
         return $this;
     }
 
+    /**
+     * @param string|int $key
+     * @param mixed $value
+     * @return $this
+     */
     public function setOption($key, $value = '')
     {
         if (is_array($key)) {
@@ -66,12 +82,20 @@ class HttpHelper
         return $this;
     }
 
+    /**
+     * @param $method
+     * @return $this
+     */
     public function setMethod($method)
     {
         $this->method = strtoupper($method);
         return $this;
     }
 
+    /**
+     * @param $domain
+     * @return $this
+     */
     public function setDomain($domain)
     {
         if (false === strpos($domain, 'http')) {
@@ -81,12 +105,22 @@ class HttpHelper
         return $this;
     }
 
+    /**
+     * @param string $format
+     * @return $this
+     */
     public function setFormat($format)
     {
         $this->setOption('format', $format);
         return $this;
     }
 
+    /**
+     * @param string $path
+     * @param array $data
+     * @return HttpResponse
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     public function curl($path = '', $data = [])
     {
         $this->setParam($data);
@@ -139,10 +173,13 @@ class HttpHelper
         $str = "";
         $n   = 0;
         foreach ($param as $k => $v) {
+            if($this->options['urlencode']){
+                $v = rawurlencode($v);
+            }
             if ($n) {
                 $str .= "&";
             }
-            $str .= $k . '=' . rawurlencode($v);
+            $str .= $k . '=' . $v;
             $n++;
         }
         return $str;
