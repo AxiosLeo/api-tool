@@ -4,6 +4,10 @@
 
 > `Http` 是基于 GuzzleHttp 的封装
 
+### 安装
+
+> composer require axios/api-tool
+
 
 ### Http 发送请求
 
