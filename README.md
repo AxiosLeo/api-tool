@@ -15,6 +15,16 @@ dump($response->getContent());
 
 //获取某一层级的数据
 dump($response->getData('data.yesterday.date'));
+
+//支持静态调用
+Http::clear();
+Http::instance($options);
+Http::setHeader([]);
+Http::setDomain("https://www.sojson.com");
+Http::setMethod('GET');
+Http::setParam('city','北京');
+$response = Http::curl("open/api/weather/json.shtml");
+dump($response->getData());
 ```
 
 
