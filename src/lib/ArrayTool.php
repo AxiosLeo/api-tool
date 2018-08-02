@@ -133,22 +133,40 @@ class ArrayTool implements \ArrayAccess
         return $array;
     }
 
-
+    /**
+     * isset($array[$key])
+     * @param mixed $offset
+     * @return bool
+     */
     public function offsetExists($offset)
     {
-        return is_null($this->get($offset));
+        return !is_null($this->get($offset));
     }
 
+    /**
+     * $array[$key]
+     * @param mixed $offset
+     * @return mixed
+     */
     public function offsetGet($offset)
     {
         return $this->get($offset);
     }
 
+    /**
+     * $array[$key] = $value
+     * @param mixed $offset
+     * @param mixed $value
+     */
     public function offsetSet($offset, $value)
     {
         return $this->set($offset, $value);
     }
 
+    /**
+     * unset($array[$key])
+     * @param mixed $offset
+     */
     public function offsetUnset($offset)
     {
         return $this->delete($offset);
