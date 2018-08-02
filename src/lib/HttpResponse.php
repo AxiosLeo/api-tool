@@ -67,32 +67,17 @@ class HttpResponse
 
     /**
      * @param string $key
+     * @param mixed $default
      * @return array
      */
-    public function getData($key = null)
+    public function getData($key = null, $default = null)
     {
         $data = $this->getContent();
-
-        if (is_null($key)) {
-            return $data;
+        if ($data instanceof ArrayTool) {
+            return $data->get($key, $default);
         }
 
-        if (false !== strpos($key, '.')) {
-            $keys = explode('.', $key);
-            $tmp  = $data;
-            foreach ($keys as $k) {
-                if (isset($tmp[$k])) {
-                    $tmp = $tmp[$k];
-                } else {
-                    $tmp = null;
-                    break;
-                }
-
-            }
-            return $tmp;
-        }
-
-        return isset($data[$key]) ? $data[$key] : $data;
+        return $data;
     }
 
     /**
@@ -101,12 +86,17 @@ class HttpResponse
     public function getContent()
     {
         if (is_null($this->data)) {
+            $data = null;
             if (is_object($this->body)) {
-                $this->data = Parse::objectToArray($this->body);
+                $data = Parse::objectToArray($this->body);
+            } elseif (is_string($this->body)) {
+                $data = Parse::jsonToArray($this->body);
             }
 
-            if (is_string($this->body)) {
-                $this->data = Parse::jsonToArray($this->body);
+            if (is_array($data)) {
+                $this->data = ArrayTool::array($data);
+            } else {
+                $this->data = $this->body;
             }
         }
 
