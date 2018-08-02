@@ -67,35 +67,35 @@ class HttpResponse
 
     /**
      * @param string $key
-     * @param mixed $default
+     * @param string $separator 分隔符 用于方便查询子节点
      * @return array
      */
-    public function getData($key = null, $default = null)
+    public function getData($key = null, $separator = '.')
     {
         $data = $this->getContent();
-        if ($data instanceof ArrayTool) {
-            return $data->get($key, $default);
+
+        if (is_array($data)) {
+            return ArrayTool::array($data, $separator)->get($key);
         }
 
         return $data;
     }
 
     /**
-     * @return array
+     * @return array|ArrayTool|string
      */
     public function getContent()
     {
         if (is_null($this->data)) {
-            $data = null;
             if (is_object($this->body)) {
-                $data = Parse::objectToArray($this->body);
-            } elseif (is_string($this->body)) {
-                $data = Parse::jsonToArray($this->body);
+                $this->data = Parse::objectToArray($this->body);
             }
 
-            if (is_array($data)) {
-                $this->data = ArrayTool::array($data);
-            } else {
+            if (is_string($this->body)) {
+                $this->data = Parse::jsonToArray($this->body);
+            }
+
+            if (!is_array($this->data)) {
                 $this->data = $this->body;
             }
         }
