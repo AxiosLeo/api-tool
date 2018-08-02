@@ -18,6 +18,7 @@ class HttpHelper
         'read_timeout'    => 80,
         'urlencode'       => 1,
         'format'          => 'array',  //array|json|xml
+        'separator'       => '.'
     ];
 
     private $method = "POST";
@@ -26,11 +27,14 @@ class HttpHelper
 
     private $param;
 
+    private $separator;
+
     public function __construct($options)
     {
-        $options       = array_merge($this->options, $options);
-        $this->options = ArrayTool::array($options);
-        $this->param   = ArrayTool::array();
+        $options         = array_merge($this->options, $options);
+        $this->options   = ArrayTool::array($options, $this->separator);
+        $this->separator = $this->options['separator'];
+        $this->param     = ArrayTool::array([], $this->separator);
     }
 
     /**
@@ -47,7 +51,7 @@ class HttpHelper
         if (is_array($header_name)) {
             $this->options['headers'] = array_merge($this->options['headers'], $header_name);
         } else {
-            $this->options['headers.' . $header_name] = $header_content;
+            $this->options['headers' . $this->separator . $header_name] = $header_content;
         }
 
         return $this;
@@ -64,7 +68,8 @@ class HttpHelper
         return $this;
     }
 
-    public function getParam(){
+    public function getParam()
+    {
         return $this->param->get();
     }
 
@@ -79,7 +84,8 @@ class HttpHelper
         return $this;
     }
 
-    public function getOption(){
+    public function getOption()
+    {
         return $this->options->get();
     }
 
