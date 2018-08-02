@@ -31,11 +31,14 @@ class ArrayTool implements \ArrayAccess
      * 设置任意层级子元素
      * @param string|array|int $key
      * @param mixed $value
+     * @return $this
      */
-    public function set($key, $value)
+    public function set($key, $value = null)
     {
         if (is_array($key)) {
-            $this->array = array_merge($this->array, $key);
+            foreach ($key as $k => $v) {
+                $this->set($k, $v);
+            }
         } else {
             if (false === strpos($key, '.')) {
                 $this->array[$key] = $value;
@@ -44,6 +47,7 @@ class ArrayTool implements \ArrayAccess
                 $this->array = $this->recurArrayChange($this->array, $keyArray, $value);
             }
         }
+        return $this;
     }
 
     /**
@@ -78,6 +82,7 @@ class ArrayTool implements \ArrayAccess
     /**
      * 删除任意层级子元素
      * @param string|array|int $key
+     * @return $this
      */
     public function delete($key)
     {
@@ -88,6 +93,7 @@ class ArrayTool implements \ArrayAccess
         } else {
             $this->set($key, null);
         }
+        return $this;
     }
 
     /**
@@ -157,6 +163,7 @@ class ArrayTool implements \ArrayAccess
      * $array[$key] = $value
      * @param mixed $offset
      * @param mixed $value
+     * @return $this
      */
     public function offsetSet($offset, $value)
     {
@@ -166,6 +173,7 @@ class ArrayTool implements \ArrayAccess
     /**
      * unset($array[$key])
      * @param mixed $offset
+     * @return $this
      */
     public function offsetUnset($offset)
     {
