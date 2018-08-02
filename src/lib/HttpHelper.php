@@ -131,7 +131,7 @@ class HttpHelper
     public function curl($path = '', $data = [])
     {
         $this->setParam($data);
-        $data = $this->param;
+        $data = $this->param->get();
 
         if (empty($this->domain) && false !== strpos($path, 'http')) {
             $url = parse_url($path);
@@ -158,7 +158,7 @@ class HttpHelper
             $path = $path . '?' . $this->formatParam($data);
         }
 
-        $result   = $client->request($this->method, $path, $this->options);
+        $result   = $client->request($this->method, $path, $this->options->get());
         $body     = $result->getBody();
         $response = new HttpResponse();
         $response->setHeader($result->getHeaders());
