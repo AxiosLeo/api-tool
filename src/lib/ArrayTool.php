@@ -15,16 +15,19 @@ namespace api\tool\lib;
  */
 class ArrayTool implements \ArrayAccess
 {
-    public static function array($array = [])
+    public static function array($array = [], $separator = '.')
     {
-        return new self($array);
+        return new self($array, $separator);
     }
 
     private $array;
 
-    public function __construct($array)
+    private $separator;
+
+    public function __construct($array, $separator = '.')
     {
-        $this->array = $array;
+        $this->array     = $array;
+        $this->separator = $separator;
     }
 
     /**
@@ -40,10 +43,10 @@ class ArrayTool implements \ArrayAccess
                 $this->set($k, $v);
             }
         } else {
-            if (false === strpos($key, '.')) {
+            if (false === strpos($key, $this->separator)) {
                 $this->array[$key] = $value;
             } else {
-                $keyArray    = explode('.', $key);
+                $keyArray    = explode($this->separator, $key);
                 $this->array = $this->recurArrayChange($this->array, $keyArray, $value);
             }
         }
@@ -62,11 +65,11 @@ class ArrayTool implements \ArrayAccess
             return $this->array;
         }
 
-        if (false === strpos($key, '.')) {
+        if (false === strpos($key, $this->separator)) {
             return isset($this->array[$key]) ? $this->array[$key] : $default;
         }
 
-        $keyArray = explode('.', $key);
+        $keyArray = explode($this->separator, $key);
         $tmp      = $this->array;
         foreach ($keyArray as $k) {
             if (isset($tmp[$k])) {
