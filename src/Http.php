@@ -16,7 +16,9 @@ use api\tool\lib\HttpResponse;
  * @package api\tool
  * @method $this setHeader($header_name, $header_content = '') static
  * @method $this setParam($key, $value = null) static
+ * @method mixed getParam() static
  * @method $this setOption($key, $value = '') static
+ * @method mixed getOption() static
  * @method $this setMethod($method) static
  * @method $this setDomain($domain) static
  * @method $this setFormat($format) static
@@ -41,12 +43,13 @@ class Http
     /**
      * @return void
      */
-    public static function clear(){
+    public static function clear()
+    {
         self::$instance = null;
     }
 
     public static function __callStatic($name, $arguments)
     {
-        return call_user_func_array([self::instance(),$name],$arguments);
+        return call_user_func_array([self::instance(), $name], $arguments);
     }
 }

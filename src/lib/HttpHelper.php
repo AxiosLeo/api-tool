@@ -24,11 +24,13 @@ class HttpHelper
 
     private $domain = "";
 
-    private $param = [];
+    private $param;
 
     public function __construct($options)
     {
-        $this->options = array_merge($this->options, $options);
+        $options       = array_merge($this->options, $options);
+        $this->options = ArrayTool::array($options);
+        $this->param   = ArrayTool::array();
     }
 
     /**
@@ -45,7 +47,7 @@ class HttpHelper
         if (is_array($header_name)) {
             $this->options['headers'] = array_merge($this->options['headers'], $header_name);
         } else {
-            $this->options['headers'][$header_name] = $header_content;
+            $this->options['headers.' . $header_name] = $header_content;
         }
 
         return $this;
@@ -58,12 +60,12 @@ class HttpHelper
      */
     public function setParam($key, $value = null)
     {
-        if (is_array($key)) {
-            $this->param = array_merge($this->param, $key);
-        } else {
-            $this->param[$key] = $value;
-        }
+        $this->param->set($key, $value);
         return $this;
+    }
+
+    public function getParam(){
+        return $this->param->get();
     }
 
     /**
@@ -73,13 +75,12 @@ class HttpHelper
      */
     public function setOption($key, $value = '')
     {
-        if (is_array($key)) {
-            $this->options = array_merge($this->options, $key);
-        } else {
-            $this->options[$key] = $value;
-        }
-
+        $this->options->set($key, $value);
         return $this;
+    }
+
+    public function getOption(){
+        return $this->options->get();
     }
 
     /**
@@ -155,7 +156,7 @@ class HttpHelper
         $body     = $result->getBody();
         $response = new HttpResponse();
         $response->setHeader($result->getHeaders());
-        $content_type = $result->getHeaderLine("content-type");
+        $content_type = $result->getHeaderLine("Content-Type");
 
         $body = (string)$body;
         if (strpos($content_type, "xml") !== false) {
@@ -173,7 +174,7 @@ class HttpHelper
         $str = "";
         $n   = 0;
         foreach ($param as $k => $v) {
-            if($this->options['urlencode']){
+            if ($this->options['urlencode']) {
                 $v = rawurlencode($v);
             }
             if ($n) {
