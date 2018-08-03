@@ -15,7 +15,7 @@ namespace api\tool\lib;
  */
 class ArrayTool implements \ArrayAccess
 {
-    public static function array($array = [], $separator = '.')
+    public static function instance($array = [], $separator = '.')
     {
         return new self($array, $separator);
     }

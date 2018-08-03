@@ -75,7 +75,7 @@ class HttpResponse
         $data = $this->getContent();
 
         if (is_array($data)) {
-            return ArrayTool::array($data, $separator)->get($key);
+            return ArrayTool::instance($data, $separator)->get($key);
         }
 
         return $data;
