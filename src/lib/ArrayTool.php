@@ -104,7 +104,7 @@ class ArrayTool implements \ArrayAccess
      * @param $key
      * @return array
      */
-    public function getChildKeyList($key)
+    public function getChildKeyList($key = null)
     {
         $child = $this->get($key);
         $list  = [];
