@@ -8,6 +8,7 @@
 
 namespace api\tool;
 
+use api\tool\lib\ArrayTool;
 use api\tool\lib\Parse;
 use api\tool\response\Json as JsonResponse;
 use api\tool\response\Jsonp as JsonpResponse;
@@ -83,6 +84,11 @@ class Response
         return self::$instance;
     }
 
+    public function __construct()
+    {
+        $this->result = ArrayTool::instance([]);
+    }
+
     /**
      * 设置请求结果中的数组元素
      * @param $key
@@ -91,7 +97,7 @@ class Response
      */
     public function setResult($key, $value = '')
     {
-        $this->result[$key] = $value;
+        $this->result->set($key,$value);
         return $this;
     }
 
@@ -138,25 +144,24 @@ class Response
             ->setResult('time', $_SERVER['REQUEST_TIME'])
             ->setResult('data', $data);
 
+        $result = $this->result->get();
         if ($this->all_to_string) {
-            $this->result = Parse::allToString($this->result);
+            $result = Parse::allToString($result);
         }
 
-        $this->result();
+        $this->result($result);
     }
 
     /**
      * 直接回调结果
      * @param string|array|null $data
      */
-    protected function result($data = null)
+    public function result($data = null)
     {
-        if (is_null($data)) {
-            $data = $this->result;
+        if(is_null($data)){
+            $this->data = $this->result->get();
         }
-
         $this->send($data);
-
     }
 
     /**
@@ -166,7 +171,7 @@ class Response
      * @return void
      * @throws \InvalidArgumentException
      */
-    public function send($data = [])
+    protected function send($data = [])
     {
         $this->data($data);
 
