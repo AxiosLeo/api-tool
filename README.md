@@ -1,3 +1,6 @@
+[![Latest Stable Version](https://poser.pugx.org/axios/api-tool/v/stable)](https://packagist.org/packages/axios/api-tool)
+[![License](https://poser.pugx.org/axios/api-tool/license)](https://packagist.org/packages/axios/api-tool)
+
 ## 接口通信组件
 
 > `Request`和`Response` 基于thinkphp5的 Request 和 Response 重构而来
