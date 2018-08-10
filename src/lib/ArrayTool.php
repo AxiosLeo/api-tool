@@ -100,17 +100,43 @@ class ArrayTool implements \ArrayAccess
     }
 
     /**
+     * 正序排序
+     * @param $key
+     * @param string $rule
+     * @param bool $save_key
+     * @return $this
+     */
+    public function sort($key, $rule = "", $save_key = true)
+    {
+        $this->sortArray($key, $rule, 'asc', $save_key);
+        return $this;
+    }
+
+    /**
+     * 倒序排序
+     * @param $key
+     * @param string $rule
+     * @param bool $save_key
+     * @return $this
+     */
+    public function rSort($key, $rule = "", $save_key = true)
+    {
+        $this->sortArray($key, $rule, 'desc', $save_key);
+        return $this;
+    }
+
+    /**
      * 支持任意层级子元素的数组排序
      * @param mixed $key
      * @param string $sortRule
      * @param string $order
+     * @param bool $save_key
      * @return mixed
      */
-    public function sort($key = null, $sortRule = "", $order = "asc")
+    private function sortArray($key = null, $sortRule = "", $order = "asc", $save_key = true)
     {
         $array = $this->get($key);
 
-        var_dump($array);
         if (!is_array($array)) {
             return false;
         }
@@ -138,31 +164,29 @@ class ArrayTool implements \ArrayAccess
                 }
                 return 0;
             });
-        } else if (is_string($sortRule) && !empty($sortRule)) {
-            /**
-             * $sortRule = "book";
-             * $order = "asc";
-             */
-            usort($array, function ($a, $b) use ($sortRule, $order) {
-                if ($a[$sortRule] == $b[$sortRule]) {
-                    return 0;
-                }
-                return (($order != 'asc') ? -1 : 1) * (($a[$sortRule] < $b[$sortRule]) ? -1 : 1);
-            });
-        } else {
-            if (empty($sortRule)) {
-                if ($order == 'asc') {
-                    asort($array);
-                } else {
-                    arsort($array);
-                }
-            } else {
-                usort($array, function ($a, $b) use ($order) {
-                    if ($a == $b) {
+        } else if (is_string($sortRule)) {
+            if (!empty($sortRule)) {
+                /**
+                 * $sortRule = "book";
+                 * $order = "asc";
+                 */
+                usort($array, function ($a, $b) use ($sortRule, $order) {
+                    if ($a[$sortRule] == $b[$sortRule]) {
                         return 0;
                     }
-                    return (($order != 'asc') ? -1 : 1) * (($a < $b) ? -1 : 1);
+                    return (($order != 'asc') ? -1 : 1) * (($a[$sortRule] < $b[$sortRule]) ? -1 : 1);
                 });
+            } else {
+                if ($save_key) {
+                    $order == 'asc' ? asort($array) : arsort($array);
+                } else {
+                    usort($array, function ($a, $b) use ($order) {
+                        if ($a == $b) {
+                            return 0;
+                        }
+                        return (($order != 'asc') ? -1 : 1) * (($a < $b) ? -1 : 1);
+                    });
+                }
             }
         }
 
