@@ -102,7 +102,7 @@ class ArrayTool implements \ArrayAccess
      * @param bool $save_key
      * @return $this
      */
-    public function sort($key, $rule = "", $save_key = true)
+    public function sort($key = null, $rule = "", $save_key = true)
     {
         $this->sortArray($key, $rule, 'asc', $save_key);
         return $this;
@@ -115,7 +115,7 @@ class ArrayTool implements \ArrayAccess
      * @param bool $save_key
      * @return $this
      */
-    public function rSort($key, $rule = "", $save_key = true)
+    public function rSort($key = null, $rule = "", $save_key = true)
     {
         $this->sortArray($key, $rule, 'desc', $save_key);
         return $this;
