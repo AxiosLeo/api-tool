@@ -1,7 +1,7 @@
 {
   "name": "axios/api-tool",
   "description": "Api Http/Request/Response Tool",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "keywords": [
     "api",
     "curl",
