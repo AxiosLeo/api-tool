@@ -43,12 +43,8 @@ class ArrayTool implements \ArrayAccess
                 $this->set($k, $v);
             }
         } else {
-            if (false === strpos($key, $this->separator)) {
-                $this->array[$key] = $value;
-            } else {
-                $keyArray    = explode($this->separator, $key);
-                $this->array = $this->recurArrayChange($this->array, $keyArray, $value);
-            }
+            $keyArray    = array_values(array_filter(explode($this->separator, $key)));
+            $this->array = $this->recurArrayChange($this->array, $keyArray, $value);
         }
         return $this;
     }
@@ -220,7 +216,9 @@ class ArrayTool implements \ArrayAccess
     private function recurArrayChange($array, $keyArray, $value = null)
     {
         $key0 = $keyArray[0];
-        if (is_array($array) && isset($keyArray[1])) {
+        if (count($keyArray) === 1) {
+            $this->changeValue($array, $key0, $value);
+        } else if (is_array($array) && isset($keyArray[1])) {
             unset($keyArray[0]);
             $keyArray = array_values($keyArray);
             if (!isset($array[$key0])) {
@@ -228,13 +226,18 @@ class ArrayTool implements \ArrayAccess
             }
             $array[$key0] = $this->recurArrayChange($array[$key0], $keyArray, $value);
         } else {
-            if (is_null($value)) {
-                unset($array[$key0]);
-            } else {
-                $array[$key0] = $value;
-            }
+            $this->changeValue($array, $key0, $value);
         }
         return $array;
+    }
+
+    private function changeValue(&$array, $key, $value)
+    {
+        if (is_null($value)) {
+            unset($array[$key]);
+        } else {
+            $array[$key] = $value;
+        }
     }
 
     /**
