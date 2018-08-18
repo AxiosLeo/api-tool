@@ -30,6 +30,33 @@ class ArrayTool implements \ArrayAccess
         $this->separator = $separator;
     }
 
+    public function filter($array, $except = 'number')
+    {
+        // $except = 'number|null|string'
+
+        $except = explode('|', $except);
+
+        foreach ($array as &$a) {
+            if (is_numeric($a) && in_array('number', $except)) {
+                continue;
+            }
+
+            if (is_string($a) && in_array('string', $except)) {
+                continue;
+            }
+
+            if (is_null($a) && in_array('null', $except)) {
+                continue;
+            }
+
+            if (empty($a)) {
+                unset($a);
+            }
+        }
+
+        return $array;
+    }
+
     /**
      * 设置任意层级子元素
      * @param string|array|int $key
