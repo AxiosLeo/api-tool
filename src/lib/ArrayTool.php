@@ -30,31 +30,38 @@ class ArrayTool implements \ArrayAccess
         $this->separator = $separator;
     }
 
-    public function filter($array, $except = 'number')
+    /**
+     * 数组过滤
+     * @desc 可自定义排除过滤
+     * @param $array
+     * @param string $except
+     * @param bool $reset_key 重置键名
+     * @return mixed
+     */
+    public function filter($array, $except = 'number',$reset_key = false)
     {
         // $except = 'number|null|string'
 
         $except = explode('|', $except);
 
-        foreach ($array as &$a) {
-            if (is_numeric($a) && in_array('number', $except)) {
+        foreach ($array as $k=>$v) {
+            if (is_numeric($v) && in_array('number', $except)) {
                 continue;
             }
 
-            if (is_string($a) && in_array('string', $except)) {
+            if (is_string($v) && in_array('string', $except)) {
                 continue;
             }
 
-            if (is_null($a) && in_array('null', $except)) {
+            if (is_null($v) && in_array('null', $except)) {
                 continue;
             }
-
-            if (empty($a)) {
-                unset($a);
+            if (empty($v)) {
+                unset($array[$k]);
             }
         }
 
-        return $array;
+        return $reset_key ? array_values($array) : $array;
     }
 
     /**
@@ -70,7 +77,7 @@ class ArrayTool implements \ArrayAccess
                 $this->set($k, $v);
             }
         } else {
-            $keyArray    = array_values(array_filter(explode($this->separator, $key)));
+            $keyArray    = $this->filter(explode($this->separator, $key), 'number', true);
             $this->array = $this->recurArrayChange($this->array, $keyArray, $value);
         }
         return $this;
