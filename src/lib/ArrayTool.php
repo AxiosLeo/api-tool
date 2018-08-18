@@ -35,7 +35,7 @@ class ArrayTool implements \ArrayAccess
      * @desc 可自定义排除过滤
      * @param $array
      * @param string $except
-     * @param bool $reset_key 重置键名
+     * @param bool $reset_key 是否重置键名
      * @return mixed
      */
     public function filter($array, $except = '', $reset_key = false)
