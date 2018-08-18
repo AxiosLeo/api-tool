@@ -38,13 +38,17 @@ class ArrayTool implements \ArrayAccess
      * @param bool $reset_key 重置键名
      * @return mixed
      */
-    public function filter($array, $except = 'number',$reset_key = false)
+    public function filter($array, $except = '', $reset_key = false)
     {
         // $except = 'number|null|string'
 
         $except = explode('|', $except);
+        if (empty($except)) {
+            $array = array_filter($array);
+            return $reset_key ? array_values($array) : $array;
+        }
 
-        foreach ($array as $k=>$v) {
+        foreach ($array as $k => $v) {
             if (is_numeric($v) && in_array('number', $except)) {
                 continue;
             }
