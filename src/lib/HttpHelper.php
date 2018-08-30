@@ -32,6 +32,7 @@ class HttpHelper
     public function __construct($options)
     {
         $options         = array_merge($this->options, $options);
+        $this->separator = $options['separator'];
         $this->options   = ArrayTool::instance($options, $this->separator);
         $this->separator = $this->options['separator'];
         $this->param     = ArrayTool::instance([], $this->separator);
