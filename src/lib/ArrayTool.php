@@ -90,7 +90,7 @@ class ArrayTool implements \ArrayAccess
     /**
      * 获取任意层级子元素
      * @param null|string|int $key
-     * @param mixed $default
+     * @param mixed|\Closure $default
      * @return mixed
      */
     public function get($key = null, $default = null)
@@ -100,7 +100,7 @@ class ArrayTool implements \ArrayAccess
         }
 
         if (false === strpos($key, $this->separator)) {
-            return isset($this->array[$key]) ? $this->array[$key] : $default;
+            return isset($this->array[$key]) ? $this->array[$key] : $this->default($key, $default);
         }
 
         $keyArray = explode($this->separator, $key);
@@ -109,11 +109,20 @@ class ArrayTool implements \ArrayAccess
             if (isset($tmp[$k])) {
                 $tmp = $tmp[$k];
             } else {
-                $tmp = $default;
+                $tmp = $this->default($key, $default);
                 break;
             }
         }
         return $tmp;
+    }
+
+    private function default($key = null, $default = null)
+    {
+        if ($default instanceof \Closure) {
+            return $default($key);
+        }
+
+        return $default;
     }
 
     /**
