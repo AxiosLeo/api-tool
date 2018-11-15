@@ -87,6 +87,23 @@ class Response
     public function __construct()
     {
         $this->result = ArrayTool::instance([]);
+        $this->contentType($this->contentType, $this->charset);
+    }
+
+    /**
+     * 设置响应头
+     * @param string $key
+     * @param string $value
+     * @return $this
+     */
+    public function setHeader($key = '', $value = '')
+    {
+        if (is_array($key)) {
+            $this->header = array_merge($this->header, $key);
+        } else {
+            $this->header[$key] = $value;
+        }
+        return $this;
     }
 
     /**
@@ -97,7 +114,7 @@ class Response
      */
     public function setResult($key, $value = '')
     {
-        $this->result->set($key,$value);
+        $this->result->set($key, $value);
         return $this;
     }
 
@@ -137,7 +154,7 @@ class Response
      */
     public function response($data = [], $code = 200, $msg = 'success', array $header = [])
     {
-        $this->header($header);
+        $this->setHeader($header);
 
         $this->setResult('code', $code)
             ->setResult('msg', $msg)
@@ -158,7 +175,7 @@ class Response
      */
     public function result($data = null)
     {
-        if(is_null($data)){
+        if (is_null($data)) {
             $this->data = $this->result->get();
         }
         $this->send($data);
@@ -177,7 +194,6 @@ class Response
 
         $data = $this->getContent();
 
-        $this->contentType($this->contentType, $this->charset);
         if (!headers_sent() && !empty($this->header)) {
             // 发送状态码
             http_response_code($this->code);
@@ -233,23 +249,6 @@ class Response
     protected function data($data)
     {
         $this->data = $data;
-        return $this;
-    }
-
-    /**
-     * 设置响应头
-     * @access public
-     * @param string|array $name 参数名
-     * @param string $value      参数值
-     * @return $this
-     */
-    public function header($name, $value = null)
-    {
-        if (is_array($name)) {
-            $this->header = array_merge($this->header, $name);
-        } else {
-            $this->header[$name] = $value;
-        }
         return $this;
     }
 
@@ -320,7 +319,7 @@ class Response
     /**
      * 页面输出类型
      * @param string $contentType 输出类型
-     * @param string $charset     输出编码
+     * @param string $charset 输出编码
      * @return $this
      */
     public function contentType($contentType, $charset = 'utf-8')
