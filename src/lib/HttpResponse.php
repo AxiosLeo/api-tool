@@ -66,6 +66,15 @@ class HttpResponse
     }
 
     /**
+     * 直接获取body内容，不进行格式处理
+     * @return string
+     */
+    public function getBody()
+    {
+        return $this->body;
+    }
+
+    /**
      * @param string $key
      * @param string $separator 分隔符 用于方便查询子节点
      * @return array
