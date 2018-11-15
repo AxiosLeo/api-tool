@@ -19,6 +19,8 @@ class HttpResponse
 
     private $data;
 
+    private $content;
+
     /**
      * @param $header
      * @return $this
@@ -81,13 +83,15 @@ class HttpResponse
      */
     public function getData($key = null, $separator = '.')
     {
-        $data = $this->getContent();
-
-        if (is_array($data)) {
-            return ArrayTool::instance($data, $separator)->get($key);
+        if (is_null($this->data)) {
+            if (is_array($this->content)) {
+                $this->data = ArrayTool::instance($this->getContent(), $separator);
+            } else {
+                $this->data = $this->body;
+            }
         }
 
-        return $data;
+        return is_object($this->data) ? $this->data->get($key) : $this->data;
     }
 
     /**
@@ -97,18 +101,18 @@ class HttpResponse
     {
         if (is_null($this->data)) {
             if (is_object($this->body)) {
-                $this->data = Parse::objectToArray($this->body);
+                $this->content = Parse::objectToArray($this->body);
             }
 
             if (is_string($this->body)) {
-                $this->data = Parse::jsonToArray($this->body);
+                $this->content = Parse::jsonToArray($this->body);
             }
 
             if (!is_array($this->data)) {
-                $this->data = $this->body;
+                $this->content = $this->body;
             }
         }
 
-        return $this->data;
+        return $this->content;
     }
 }
