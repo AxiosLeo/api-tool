@@ -100,7 +100,7 @@ class ArrayTool implements \ArrayAccess
         }
 
         if (false === strpos($key, $this->separator)) {
-            return isset($this->array[$key]) ? $this->array[$key] : $this->default($key, $default);
+            return isset($this->array[$key]) ? $this->array[$key] : $this->defaultValue($key, $default);
         }
 
         $keyArray = explode($this->separator, $key);
@@ -109,14 +109,14 @@ class ArrayTool implements \ArrayAccess
             if (isset($tmp[$k])) {
                 $tmp = $tmp[$k];
             } else {
-                $tmp = $this->default($key, $default);
+                $tmp = $this->defaultValue($key, $default);
                 break;
             }
         }
         return $tmp;
     }
 
-    private function default($key = null, $default = null)
+    private function defaultValue($key = null, $default = null)
     {
         if ($default instanceof \Closure) {
             return $default($key);
