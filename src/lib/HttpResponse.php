@@ -23,6 +23,7 @@ class HttpResponse
 
     /**
      * @param $header
+     *
      * @return $this
      */
     public function setHeader($header)
@@ -41,6 +42,7 @@ class HttpResponse
 
     /**
      * @param $status
+     *
      * @return $this
      */
     public function setStatus($status)
@@ -59,6 +61,7 @@ class HttpResponse
 
     /**
      * @param $body
+     *
      * @return $this
      */
     public function setBody($body)
@@ -79,18 +82,19 @@ class HttpResponse
     /**
      * @param string $key
      * @param string $separator 分隔符 用于方便查询子节点
+     *
      * @return array
      */
     public function getData($key = null, $separator = '.')
     {
+        $content = is_null($this->content) ? $this->getContent() : $this->content;
         if (is_null($this->data)) {
-            if (is_array($this->content)) {
-                $this->data = ArrayTool::instance($this->getContent(), $separator);
+            if (is_array($content)) {
+                $this->data = ArrayTool::instance($content, $separator);
             } else {
                 $this->data = $this->body;
             }
         }
-
         return is_object($this->data) ? $this->data->get($key) : $this->data;
     }
 
@@ -108,7 +112,7 @@ class HttpResponse
                 $this->content = Parse::jsonToArray($this->body);
             }
 
-            if (!is_array($this->data)) {
+            if (!is_array($this->content)) {
                 $this->content = $this->body;
             }
         }
