@@ -39,8 +39,9 @@ class HttpHelper
     }
 
     /**
-     * @param $header_name
+     * @param        $header_name
      * @param string $header_content
+     *
      * @return $this
      */
     public function setHeader($header_name, $header_content = '')
@@ -59,8 +60,9 @@ class HttpHelper
     }
 
     /**
-     * @param $key
+     * @param       $key
      * @param mixed $value
+     *
      * @return $this
      */
     public function setParam($key, $value = null)
@@ -76,7 +78,8 @@ class HttpHelper
 
     /**
      * @param string|int $key
-     * @param mixed $value
+     * @param mixed      $value
+     *
      * @return $this
      */
     public function setOption($key, $value = '')
@@ -92,6 +95,7 @@ class HttpHelper
 
     /**
      * @param $method
+     *
      * @return $this
      */
     public function setMethod($method)
@@ -102,6 +106,7 @@ class HttpHelper
 
     /**
      * @param $domain
+     *
      * @return $this
      */
     public function setDomain($domain)
@@ -115,6 +120,7 @@ class HttpHelper
 
     /**
      * @param string $format
+     *
      * @return $this
      */
     public function setFormat($format)
@@ -125,7 +131,8 @@ class HttpHelper
 
     /**
      * @param string $path
-     * @param array $data
+     * @param array  $data
+     *
      * @return HttpResponse
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
@@ -149,6 +156,7 @@ class HttpHelper
         if ($this->method === HttpMethod::POST) {
             if ($this->options['format'] === 'json') {
                 $this->setHeader("Content-Type", "application/json; charset=UTF8");
+                $this->setOption('body', Parse::arrayToJson($data));
             } else if ($this->options['format'] === 'xml') {
                 $this->setHeader("Content-Type", "text/xml; charset=UTF8");
                 $this->setOption('body', Parse::ArrayToXml($data));
