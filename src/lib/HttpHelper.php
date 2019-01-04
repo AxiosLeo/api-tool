@@ -8,6 +8,7 @@
 
 namespace api\tool\lib;
 
+use api\tool\Http;
 use GuzzleHttp\Client;
 
 class HttpHelper
@@ -180,6 +181,9 @@ class HttpHelper
 
         $response->setBody($body)
             ->setStatus($result->getStatusCode());
+
+        Http::clear();
+
         return $response;
     }
 
