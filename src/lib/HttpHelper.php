@@ -150,7 +150,6 @@ class HttpHelper
             } else {
                 $this->domain = "https://" . $url['host'];
             }
-
         }
 
         $client = new Client(['base_uri' => $this->domain]);
