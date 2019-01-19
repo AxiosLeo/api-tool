@@ -132,6 +132,17 @@ class HttpHelper
     }
 
     /**
+     * @param $body
+     *
+     * @return $this
+     */
+    public function setBody($body)
+    {
+        $this->setOption('body', $body);
+        return $this;
+    }
+
+    /**
      * @param string $path
      * @param array  $data
      *
@@ -155,14 +166,17 @@ class HttpHelper
         $client = new Client(['base_uri' => $this->domain]);
 
         if ($this->method === HttpMethod::POST) {
-            if ($this->options['format'] === 'json') {
-                $this->setHeader("Content-Type", "application/json; charset=UTF8");
-                $this->setOption('body', Parse::arrayToJson($data));
-            } else if ($this->options['format'] === 'xml') {
-                $this->setHeader("Content-Type", "text/xml; charset=UTF8");
-                $this->setOption('body', Parse::ArrayToXml($data, $this->options->get('xml_root_node_name')));
-            } else {
-                $this->setOption('form_params', $data);
+            if ($this->options['format'] === 'array') {
+                $this->options->set('form_params', $data);
+            }
+            if (empty($this->options->get('body'))) {
+                if ($this->options['format'] === 'json') {
+                    $this->setHeader("Content-Type", "application/json; charset=UTF8");
+                    $this->options->set('body', Parse::arrayToJson($data));
+                } else if ($this->options['format'] === 'xml') {
+                    $this->setHeader("Content-Type", "text/xml; charset=UTF8");
+                    $this->options->set('body', Parse::ArrayToXml($data, $this->options->get('xml_root_node_name')));
+                }
             }
         } else if (!empty($data)) {
             $path = $path . '?' . $this->formatParam($data);
