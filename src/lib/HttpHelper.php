@@ -14,12 +14,13 @@ use GuzzleHttp\Client;
 class HttpHelper
 {
     private $options = [
-        'http_errors'     => false,
-        'connect_timeout' => 30,
-        'read_timeout'    => 80,
-        'urlencode'       => 1,
-        'format'          => 'array',  //array|json|xml
-        'separator'       => '.'
+        'http_errors'        => false,
+        'connect_timeout'    => 30,
+        'read_timeout'       => 80,
+        'urlencode'          => 1,
+        'format'             => 'array',  //array|json|xml
+        'separator'          => '.',
+        'xml_root_node_name' => 'data'
     ];
 
     private $method = "POST";
@@ -160,7 +161,7 @@ class HttpHelper
                 $this->setOption('body', Parse::arrayToJson($data));
             } else if ($this->options['format'] === 'xml') {
                 $this->setHeader("Content-Type", "text/xml; charset=UTF8");
-                $this->setOption('body', Parse::ArrayToXml($data));
+                $this->setOption('body', Parse::ArrayToXml($data, $this->options->get('xml_root_node_name')));
             } else {
                 $this->setOption('form_params', $data);
             }
