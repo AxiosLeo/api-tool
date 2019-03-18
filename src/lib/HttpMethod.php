@@ -8,7 +8,6 @@
 
 namespace api\tool\lib;
 
-
 class HttpMethod
 {
     const GET     = 'GET';

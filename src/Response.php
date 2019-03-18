@@ -68,6 +68,7 @@ class Response
 
     /**
      * @param string $type
+     *
      * @return Response|JsonResponse|XmlResponse|JsonpResponse
      */
     public static function instance($type = 'json')
@@ -91,9 +92,11 @@ class Response
     }
 
     /**
-     * 设置响应头
+     * 设置响应头.
+     *
      * @param string $key
      * @param string $value
+     *
      * @return $this
      */
     public function setHeader($key = '', $value = '')
@@ -103,25 +106,31 @@ class Response
         } else {
             $this->header[$key] = $value;
         }
+
         return $this;
     }
 
     /**
-     * 设置请求结果中的数组元素
+     * 设置请求结果中的数组元素.
+     *
      * @param $key
      * @param string $value
+     *
      * @return $this
      */
     public function setResult($key, $value = '')
     {
         $this->result->set($key, $value);
+
         return $this;
     }
 
     /**
-     * 回调配置
+     * 回调配置.
+     *
      * @param $key
      * @param string $value
+     *
      * @return $this
      */
     public function setOptions($key, $value = '')
@@ -131,14 +140,16 @@ class Response
         } else {
             $this->options[$key] = $value;
         }
+
         return $this;
     }
 
     /**
-     * 异常情况下的请求结果
-     * @param int $code
+     * 异常情况下的请求结果.
+     *
+     * @param int    $code
      * @param string $msg
-     * @param array $header
+     * @param array  $header
      */
     public function wrong($code = 500, $msg = 'unknown error', array $header = [])
     {
@@ -146,11 +157,12 @@ class Response
     }
 
     /**
-     * 正常情况下的请求结果
-     * @param array $data
-     * @param int $code
+     * 正常情况下的请求结果.
+     *
+     * @param array  $data
+     * @param int    $code
      * @param string $msg
-     * @param array $header
+     * @param array  $header
      */
     public function response($data = [], $code = 200, $msg = 'success', array $header = [])
     {
@@ -170,7 +182,8 @@ class Response
     }
 
     /**
-     * 直接回调结果
+     * 直接回调结果.
+     *
      * @param string|array|null $data
      */
     public function result($data = null)
@@ -182,10 +195,10 @@ class Response
     }
 
     /**
-     * 发送数据到客户端
-     * @access public
+     * 发送数据到客户端.
+     *
      * @param $data
-     * @return void
+     *
      * @throws \InvalidArgumentException
      */
     protected function send($data = [])
@@ -218,9 +231,10 @@ class Response
     }
 
     /**
-     * 处理数据
-     * @access protected
+     * 处理数据.
+     *
      * @param mixed $data 要处理的数据
+     *
      * @return mixed
      */
     protected function output($data)
@@ -229,32 +243,38 @@ class Response
     }
 
     /**
-     * 输出的参数
-     * @access public
+     * 输出的参数.
+     *
      * @param mixed $options 输出参数
+     *
      * @return $this
      */
     public function options($options = [])
     {
         $this->options = array_merge($this->options, $options);
+
         return $this;
     }
 
     /**
-     * 输出数据设置
-     * @access public
+     * 输出数据设置.
+     *
      * @param mixed $data 输出数据
+     *
      * @return $this
      */
     protected function data($data)
     {
         $this->data = $data;
+
         return $this;
     }
 
     /**
-     * 设置页面输出内容
+     * 设置页面输出内容.
+     *
      * @param $content
+     *
      * @return $this
      */
     public function content($content)
@@ -267,70 +287,87 @@ class Response
             throw new \InvalidArgumentException(sprintf('variable type error： %s', gettype($content)));
         }
 
-        $this->content = (string)$content;
+        $this->content = (string) $content;
 
         return $this;
     }
 
     /**
      * 发送HTTP状态
-     * @param integer $code 状态码
+     *
+     * @param int $code 状态码
+     *
      * @return $this
      */
     public function code($code)
     {
         $this->code = $code;
+
         return $this;
     }
 
     /**
-     * LastModified
+     * LastModified.
+     *
      * @param string $time
+     *
      * @return $this
      */
     public function lastModified($time)
     {
         $this->header['Last-Modified'] = $time;
+
         return $this;
     }
 
     /**
-     * Expires
+     * Expires.
+     *
      * @param string $time
+     *
      * @return $this
      */
     public function expires($time)
     {
         $this->header['Expires'] = $time;
+
         return $this;
     }
 
     /**
-     * ETag
+     * ETag.
+     *
      * @param string $eTag
+     *
      * @return $this
      */
     public function eTag($eTag)
     {
         $this->header['ETag'] = $eTag;
+
         return $this;
     }
 
     /**
-     * 页面输出类型
+     * 页面输出类型.
+     *
      * @param string $contentType 输出类型
-     * @param string $charset 输出编码
+     * @param string $charset     输出编码
+     *
      * @return $this
      */
     public function contentType($contentType, $charset = 'utf-8')
     {
         $this->header['Content-Type'] = $contentType . '; charset=' . $charset;
+
         return $this;
     }
 
     /**
-     * 获取头部信息
+     * 获取头部信息.
+     *
      * @param string $name 头部名称
+     *
      * @return mixed
      */
     public function getHeader($name = '')
@@ -343,7 +380,8 @@ class Response
     }
 
     /**
-     * 获取原始数据
+     * 获取原始数据.
+     *
      * @return mixed
      */
     public function getData()
@@ -352,7 +390,8 @@ class Response
     }
 
     /**
-     * 获取输出数据
+     * 获取输出数据.
+     *
      * @return mixed
      */
     public function getContent()
@@ -368,14 +407,16 @@ class Response
                 throw new \InvalidArgumentException(sprintf('variable type error： %s', gettype($content)));
             }
 
-            $this->content = (string)$content;
+            $this->content = (string) $content;
         }
+
         return $this->content;
     }
 
     /**
      * 获取状态码
-     * @return integer
+     *
+     * @return int
      */
     public function getCode()
     {

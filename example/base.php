@@ -6,16 +6,17 @@
  * @datetime: 2018/7/3 11:51
  */
 
-
 //need composer install
 
 /**
- * 数据打印或输出
+ * 数据打印或输出.
+ *
  * @param $var
  * @param bool $echo
  * @param null $label
- * @param int $flags
- * @return null|string|string[]
+ * @param int  $flags
+ *
+ * @return string|string[]|null
  */
 function dump($var = null, $echo = true, $label = null, $flags = ENT_SUBSTITUTE)
 {
@@ -29,7 +30,8 @@ function dump($var = null, $echo = true, $label = null, $flags = ENT_SUBSTITUTE)
     }
     $output = '<pre>' . $label . $output . '</pre>';
     if ($echo) {
-        echo($output);
+        echo $output;
+
         return '';
     } else {
         return $output;
@@ -37,5 +39,3 @@ function dump($var = null, $echo = true, $label = null, $flags = ENT_SUBSTITUTE)
 }
 
 require_once __DIR__ . '/../vendor/autoload.php';
-
-
