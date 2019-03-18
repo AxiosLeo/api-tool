@@ -8,7 +8,6 @@
 
 namespace api\tool\lib;
 
-
 class HttpResponse
 {
     private $header = [];
@@ -21,6 +20,8 @@ class HttpResponse
 
     private $content;
 
+    private $response;
+
     /**
      * @param $header
      *
@@ -29,6 +30,7 @@ class HttpResponse
     public function setHeader($header)
     {
         $this->header = $header;
+
         return $this;
     }
 
@@ -48,6 +50,7 @@ class HttpResponse
     public function setStatus($status)
     {
         $this->status = $status;
+
         return $this;
     }
 
@@ -67,11 +70,13 @@ class HttpResponse
     public function setBody($body)
     {
         $this->body = $body;
+
         return $this;
     }
 
     /**
-     * 直接获取body内容，不进行格式处理
+     * 直接获取body内容，不进行格式处理.
+     *
      * @return string
      */
     public function getBody()
@@ -95,6 +100,7 @@ class HttpResponse
                 $this->data = $this->body;
             }
         }
+
         return is_object($this->data) ? $this->data->get($key) : $this->data;
     }
 
@@ -118,5 +124,13 @@ class HttpResponse
         }
 
         return $this->content;
+    }
+
+    public function guzzleResponse($response = null)
+    {
+        if (!is_null($response)) {
+            $this->response = $response;
+        }
+        return $this->response;
     }
 }

@@ -20,12 +20,12 @@ class HttpHelper
         'urlencode'          => 1,
         'format'             => 'array',  //array|json|xml
         'separator'          => '.',
-        'xml_root_node_name' => 'data'
+        'xml_root_node_name' => 'data',
     ];
 
-    private $method = "POST";
+    private $method = 'POST';
 
-    private $domain = "";
+    private $domain = '';
 
     private $param;
 
@@ -70,6 +70,7 @@ class HttpHelper
     public function setParam($key, $value = null)
     {
         $this->param->set($key, $value);
+
         return $this;
     }
 
@@ -87,6 +88,7 @@ class HttpHelper
     public function setOption($key, $value = '')
     {
         $this->options->set($key, $value);
+
         return $this;
     }
 
@@ -103,6 +105,7 @@ class HttpHelper
     public function setMethod($method)
     {
         $this->method = strtoupper($method);
+
         return $this;
     }
 
@@ -117,6 +120,7 @@ class HttpHelper
             $domain = 'http://' . $domain;
         }
         $this->domain = $domain;
+
         return $this;
     }
 
@@ -128,6 +132,7 @@ class HttpHelper
     public function setFormat($format)
     {
         $this->setOption('format', $format);
+
         return $this;
     }
 
@@ -139,6 +144,7 @@ class HttpHelper
     public function setBody($body)
     {
         $this->setOption('body', $body);
+
         return $this;
     }
 
@@ -147,6 +153,7 @@ class HttpHelper
      * @param array  $data
      *
      * @return HttpResponse
+     *
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function curl($path = '', $data = [])
@@ -156,40 +163,41 @@ class HttpHelper
 
         if (empty($this->domain) && false !== strpos($path, 'http')) {
             $url = parse_url($path);
-            if ($url['scheme'] === 4) {
-                $this->domain = "http://" . $url['host'];
+            if (4 === $url['scheme']) {
+                $this->domain = 'http://' . $url['host'];
             } else {
-                $this->domain = "https://" . $url['host'];
+                $this->domain = 'https://' . $url['host'];
             }
         }
 
         $client = new Client(['base_uri' => $this->domain]);
 
-        if ($this->method === HttpMethod::POST) {
-            if ($this->options['format'] === 'array') {
+        if (HttpMethod::POST === $this->method) {
+            if ('array' === $this->options['format']) {
                 $this->options->set('form_params', $data);
             }
             if (empty($this->options->get('body'))) {
-                if ($this->options['format'] === 'json') {
-                    $this->setHeader("Content-Type", "application/json; charset=UTF8");
+                if ('json' === $this->options['format']) {
+                    $this->setHeader('Content-Type', 'application/json; charset=UTF8');
                     $this->options->set('body', Parse::arrayToJson($data));
-                } else if ($this->options['format'] === 'xml') {
-                    $this->setHeader("Content-Type", "text/xml; charset=UTF8");
+                } elseif ('xml' === $this->options['format']) {
+                    $this->setHeader('Content-Type', 'text/xml; charset=UTF8');
                     $this->options->set('body', Parse::ArrayToXml($data, $this->options->get('xml_root_node_name')));
                 }
             }
-        } else if (!empty($data)) {
+        } elseif (!empty($data)) {
             $path = $path . '?' . $this->formatParam($data);
         }
 
         $result   = $client->request($this->method, $path, $this->options->get());
         $body     = $result->getBody();
         $response = new HttpResponse();
+        $response->guzzleResponse($result);
         $response->setHeader($result->getHeaders());
-        $content_type = $result->getHeaderLine("Content-Type");
+        $content_type = $result->getHeaderLine('Content-Type');
 
         $body = (string)$body;
-        if (strpos($content_type, "xml") !== false) {
+        if (false !== strpos($content_type, 'xml')) {
             $body = Parse::xmlToArray($body);
         }
 
@@ -204,18 +212,19 @@ class HttpHelper
     public function formatParam($param)
     {
         ksort($param);
-        $str = "";
+        $str = '';
         $n   = 0;
         foreach ($param as $k => $v) {
             if ($this->options['urlencode']) {
                 $v = rawurlencode($v);
             }
             if ($n) {
-                $str .= "&";
+                $str .= '&';
             }
             $str .= $k . '=' . $v;
-            $n++;
+            ++$n;
         }
+
         return $str;
     }
 }
