@@ -39,8 +39,12 @@ class ArrayTool implements \ArrayAccess
     public function set($key, $value = null)
     {
         if (is_array($key)) {
-            $this->toList($key, $list);
-            $this->list = array_merge($this->list, $list);
+            if (!empty($key)) {
+                $this->toList($key, $list);
+                if (is_array($list)) {
+                    $this->list = array_merge($this->list, $list);
+                }
+            }
         } else if (is_array($value)) {
             if (empty($value)) {
                 $this->list[$key] = $value;
