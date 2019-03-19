@@ -15,150 +15,77 @@ namespace api\tool\lib;
  */
 class ArrayTool implements \ArrayAccess
 {
-    public static function instance($array = [], $separator = '.')
+    public static function instance($array = [], $separator = ".")
     {
         return new self($array, $separator);
     }
 
-    private $array;
+    private $list = [];
 
-    private $separator;
+    private $separator = "";
 
-    public function __construct($array, $separator = '.')
+    public function __construct($array = [], $separator = '.')
     {
-        $this->array     = $array;
         $this->separator = $separator;
+        if (!empty($array)) {
+            $this->toList($array, $this->list);
+        }
     }
 
-    /**
-     * 数组过滤.
-     *
-     * @desc 可自定义排除过滤
-     *
-     * @param $array
-     * @param string $except
-     * @param bool   $reset_key 是否重置键名
-     *
-     * @return mixed
-     */
-    public function filter($array, $except = '', $reset_key = false)
-    {
-        // $except = 'number|null|string'
-
-        $except = explode('|', $except);
-        if (empty($except)) {
-            $array = array_filter($array);
-
-            return $reset_key ? array_values($array) : $array;
-        }
-
-        foreach ($array as $k => $v) {
-            if (is_numeric($v) && in_array('number', $except)) {
-                continue;
-            }
-
-            if (is_string($v) && in_array('string', $except)) {
-                continue;
-            }
-
-            if (is_null($v) && in_array('null', $except)) {
-                continue;
-            }
-            if (empty($v)) {
-                unset($array[$k]);
-            }
-        }
-
-        return $reset_key ? array_values($array) : $array;
-    }
-
-    /**
-     * 设置任意层级子元素.
-     *
-     * @param string|array|int $key
-     * @param mixed            $value
-     *
-     * @return $this
-     */
     public function set($key, $value = null)
     {
         if (is_array($key)) {
-            foreach ($key as $k => $v) {
-                $this->set($k, $v);
-            }
+            $this->toList($key, $list);
+            $this->list = array_merge($this->list, $list);
+        } else if (is_array($value)) {
+            $this->toList($value, $list, $key . ".");
+            $this->list = array_merge($this->list, $list);
+        } else if ($value == null) {
+            unset($this->list[$key]);
         } else {
-            $keyArray    = $this->filter(explode($this->separator, $key), 'number', true);
-            $this->array = $this->recurArrayChange($this->array, $keyArray, $value);
+            $this->list[$key] = $value;
         }
-
-        return $this;
     }
 
-    /**
-     * 获取任意层级子元素.
-     *
-     * @param string|int|null $key
-     * @param mixed|\Closure  $default
-     *
-     * @return mixed
-     */
     public function get($key = null, $default = null)
     {
+        if (is_array($key)) {
+            throw new \InvalidArgumentException('$key cannot be array');
+        }
         if (is_null($key)) {
-            return $this->array;
+            $this->toArray($this->list, $array);
+            return $array;
         }
-
-        if (false === strpos($key, $this->separator)) {
-            return isset($this->array[$key]) ? $this->array[$key] : $this->defaultValue($key, $default);
+        if (isset($this->list[$key])) {
+            return $this->list[$key];
         }
-
-        $keyArray = explode($this->separator, $key);
-        $tmp      = $this->array;
-        foreach ($keyArray as $k) {
-            if (isset($tmp[$k])) {
-                $tmp = $tmp[$k];
-            } else {
-                $tmp = $this->defaultValue($key, $default);
-                break;
-            }
+        $this->toArray($this->list, $array);
+        if (isset($array[$key])) {
+            return $array[$key];
         }
-
-        return $tmp;
-    }
-
-    private function defaultValue($key = null, $default = null)
-    {
+        $keyArray = explode(".", $key);
+        $value    = $this->find($keyArray, $array);
+        if (!is_null($value)) {
+            return $value;
+        }
         if ($default instanceof \Closure) {
             return $default($key);
         }
-
         return $default;
     }
 
-    /**
-     * 删除任意层级子元素.
-     *
-     * @param string|array|int $key
-     *
-     * @return $this
-     */
     public function delete($key)
     {
-        if (is_array($key)) {
-            foreach ($key as $k) {
-                $this->set($k, null);
-            }
-        } else {
-            $this->set($key, null);
+        if (is_array($key) || is_object($key)) {
+            throw new \InvalidArgumentException($key . " cannot be array or object.");
         }
-
-        return $this;
+        $this->set($key, null);
     }
 
     /**
      * 正序排序.
      *
-     * @param $key
+     * @param        $key
      * @param string $rule
      * @param bool   $save_key
      *
@@ -174,7 +101,7 @@ class ArrayTool implements \ArrayAccess
     /**
      * 倒序排序.
      *
-     * @param $key
+     * @param        $key
      * @param string $rule
      * @param bool   $save_key
      *
@@ -258,9 +185,24 @@ class ArrayTool implements \ArrayAccess
             }
         }
 
-        is_null($key) ? $this->array = $array : $this->set($key, $array);
+        is_null($key) ? $this->set($array) : $this->set($key, $array);
 
-        return $this->array;
+        return $this->get($key);
+    }
+
+    private function find($keyArray, $array)
+    {
+        if (is_null($keyArray)) {
+            dump($keyArray);
+            die();
+        }
+        if (1 === count($keyArray)) {
+            return isset($array[$keyArray[0]]) ? $array[$keyArray[0]] : null;
+        }
+        $key0 = $keyArray[0];
+        unset($keyArray[0]);
+        $keyArray = array_values($keyArray);
+        return $this->find($keyArray, $array[$key0]);
     }
 
     /**
@@ -283,44 +225,74 @@ class ArrayTool implements \ArrayAccess
     }
 
     /**
-     * 递归遍历.
-     *
-     * @param array $array
-     * @param array $keyArray
-     * @param mixed $value
+     * @param string|array $except
+     * @param bool         $reset_key
      *
      * @return array
      */
-    private function recurArrayChange($array, $keyArray, $value = null)
+    public function filter($except = '', $reset_key = false)
     {
-        $key0 = $keyArray[0];
-        if (1 === count($keyArray)) {
-            $this->changeValue($array, $key0, $value);
-        } elseif (is_array($array) && isset($keyArray[1])) {
-            unset($keyArray[0]);
-            $keyArray = array_values($keyArray);
-            if (!isset($array[$key0])) {
-                $array[$key0] = [];
-            }
-            $array[$key0] = $this->recurArrayChange($array[$key0], $keyArray, $value);
-        } else {
-            $this->changeValue($array, $key0, $value);
+        if (empty($except)) {
+            $array = array_filter($this->list);
+            return $reset_key ? array_values($array) : $array;
         }
+        $array = $this->list;
+        foreach ($array as $k => $v) {
+            if (is_numeric($v) && in_array('number', $except)) {
+                continue;
+            }
 
+            if (is_string($v) && in_array('string', $except)) {
+                continue;
+            }
+
+            if (is_null($v) && in_array('null', $except)) {
+                continue;
+            }
+            if (empty($v)) {
+                unset($array[$k]);
+            }
+        }
+        return $reset_key ? array_values($array) : $array;
+    }
+
+    private function toList($array, &$list = [], $prefix = "")
+    {
+        foreach ($array as $k => $v) {
+            if (is_array($v)) {
+                $tmp = $prefix == "" ? $k : $prefix . "." . $k;
+                $this->toList($v, $list, $tmp);
+            } else {
+                $list[$prefix . "." . $k] = $v;
+            }
+        }
+    }
+
+    private function toArray($list, &$array = [])
+    {
+        foreach ($list as $key => $value) {
+            $keyArray = explode(".", $key);
+            $this->value($keyArray, $value, $array);
+        }
+    }
+
+    private function value($key, $value, &$array)
+    {
+        if (!is_array($key)) {
+            $array[$key] = $value;
+        } else if (is_array($key) && count($key) === 1) {
+            $array[$key[0]] = $value;
+        } else if (is_array($key)) {
+            $key0 = $key[0];
+            unset($key[0]);
+            $key = array_values($key);
+            $this->value($key, $value, $array[$key0]);
+        }
         return $array;
     }
 
-    private function changeValue(&$array, $key, $value)
-    {
-        if (is_null($value)) {
-            unset($array[$key]);
-        } else {
-            $array[$key] = $value;
-        }
-    }
-
     /**
-     * isset($array[$key]).
+     * isset($array[$key])
      *
      * @param mixed $offset
      *
@@ -332,8 +304,7 @@ class ArrayTool implements \ArrayAccess
     }
 
     /**
-     * $array[$key].
-     *
+     * $array[$key]
      * @param mixed $offset
      *
      * @return mixed
@@ -344,8 +315,7 @@ class ArrayTool implements \ArrayAccess
     }
 
     /**
-     * $array[$key] = $value.
-     *
+     * $array[$key] = $value
      * @param mixed $offset
      * @param mixed $value
      *
@@ -357,7 +327,7 @@ class ArrayTool implements \ArrayAccess
     }
 
     /**
-     * unset($array[$key]).
+     * unset($array[$key])
      *
      * @param mixed $offset
      *
@@ -365,6 +335,6 @@ class ArrayTool implements \ArrayAccess
      */
     public function offsetUnset($offset)
     {
-        return $this->delete($offset);
+        return $this->set($offset, null);
     }
 }
