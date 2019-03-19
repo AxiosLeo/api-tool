@@ -20,7 +20,7 @@
     "issues": "https://github.com/AxiosCros/api-tool/issues"
   },
   "require": {
-    "php": ">=7.0",
+    "php": ">=7.1",
     "guzzlehttp/guzzle": "^6.3"
   },
   "require-dev": {
