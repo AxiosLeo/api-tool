@@ -24,7 +24,8 @@
     "guzzlehttp/guzzle": "^6.3"
   },
   "require-dev": {
-    "composer/composer": "1.0.*@dev"
+    "composer/composer": "1.0.*@dev",
+    "symfony/var-dumper": "^4.2"
   },
   "autoload": {
     "psr-4": {
