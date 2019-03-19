@@ -32,14 +32,22 @@ class ArrayTool implements \ArrayAccess
         }
     }
 
+    /**
+     * @param array|string $key
+     * @param null         $value
+     */
     public function set($key, $value = null)
     {
         if (is_array($key)) {
             $this->toList($key, $list);
             $this->list = array_merge($this->list, $list);
         } else if (is_array($value)) {
-            $this->toList($value, $list, $key . ".");
-            $this->list = array_merge($this->list, $list);
+            if (empty($value)) {
+                $this->list[$key] = $value;
+            } else {
+                $this->toList($value, $list, $key);
+                $this->list = array_merge($this->list, $list);
+            }
         } else if ($value == null) {
             unset($this->list[$key]);
         } else {
@@ -47,6 +55,12 @@ class ArrayTool implements \ArrayAccess
         }
     }
 
+    /**
+     * @param null $key
+     * @param null $default
+     *
+     * @return null|mixed
+     */
     public function get($key = null, $default = null)
     {
         if (is_array($key)) {
@@ -63,7 +77,7 @@ class ArrayTool implements \ArrayAccess
         if (isset($array[$key])) {
             return $array[$key];
         }
-        $keyArray = explode(".", $key);
+        $keyArray = explode($this->separator, $key);
         $value    = $this->find($keyArray, $array);
         if (!is_null($value)) {
             return $value;
@@ -74,128 +88,39 @@ class ArrayTool implements \ArrayAccess
         return $default;
     }
 
-    public function delete($key)
+    /**
+     * @param      $key
+     * @param bool $deleteParentNode
+     */
+    public function delete($key, $deleteParentNode = true): void
     {
         if (is_array($key) || is_object($key)) {
             throw new \InvalidArgumentException($key . " cannot be array or object.");
         }
-        $this->set($key, null);
+        if ($deleteParentNode) {
+            $this->set($key, null);
+        } else {
+            $sep_pos = strrpos($key, $this->separator);
+            if (false === $sep_pos) {
+                $this->set($key, null);
+            } else {
+                $parent_key = substr($key, 0, $sep_pos);
+                $child_key  = substr($key, $sep_pos + 1);
+                $array      = $this->get($parent_key);
+                unset($array[$child_key]);
+                $this->set($parent_key, $array);
+            }
+        }
     }
 
     /**
-     * 正序排序.
-     *
-     * @param        $key
-     * @param string $rule
-     * @param bool   $save_key
-     *
-     * @return $this
-     */
-    public function sort($key = null, $rule = '', $save_key = true)
-    {
-        $this->sortArray($key, $rule, 'asc', $save_key);
-
-        return $this;
-    }
-
-    /**
-     * 倒序排序.
-     *
-     * @param        $key
-     * @param string $rule
-     * @param bool   $save_key
-     *
-     * @return $this
-     */
-    public function rSort($key = null, $rule = '', $save_key = true)
-    {
-        $this->sortArray($key, $rule, 'desc', $save_key);
-
-        return $this;
-    }
-
-    /**
-     * 支持任意层级子元素的数组排序.
-     *
-     * @param mixed  $key
-     * @param string $sortRule
-     * @param string $order
-     * @param bool   $save_key
+     * @param $keyArray
+     * @param $array
      *
      * @return mixed
      */
-    private function sortArray($key = null, $sortRule = '', $order = 'asc', $save_key = true)
-    {
-        $array = $this->get($key);
-
-        if (!is_array($array)) {
-            return false;
-        }
-
-        /*
-         * $array = [
-         *              ["book"=>10,"version"=>10],
-         *              ["book"=>19,"version"=>30],
-         *              ["book"=>10,"version"=>30],
-         *              ["book"=>19,"version"=>10],
-         *              ["book"=>10,"version"=>20],
-         *              ["book"=>19,"version"=>20]
-         *      ];
-         */
-        if (is_array($sortRule)) {
-            /*
-             * $sortRule = ['book'=>"asc",'version'=>"asc"];
-             */
-            usort($array, function ($a, $b) use ($sortRule) {
-                foreach ($sortRule as $sortKey => $order) {
-                    if ($a[$sortKey] == $b[$sortKey]) {
-                        continue;
-                    }
-
-                    return (('asc' != $order) ? -1 : 1) * (($a[$sortKey] < $b[$sortKey]) ? -1 : 1);
-                }
-
-                return 0;
-            });
-        } elseif (is_string($sortRule)) {
-            if (!empty($sortRule)) {
-                /*
-                 * $sortRule = "book";
-                 * $order = "asc";
-                 */
-                usort($array, function ($a, $b) use ($sortRule, $order) {
-                    if ($a[$sortRule] == $b[$sortRule]) {
-                        return 0;
-                    }
-
-                    return (('asc' != $order) ? -1 : 1) * (($a[$sortRule] < $b[$sortRule]) ? -1 : 1);
-                });
-            } else {
-                if ($save_key) {
-                    'asc' == $order ? asort($array) : arsort($array);
-                } else {
-                    usort($array, function ($a, $b) use ($order) {
-                        if ($a == $b) {
-                            return 0;
-                        }
-
-                        return (('asc' != $order) ? -1 : 1) * (($a < $b) ? -1 : 1);
-                    });
-                }
-            }
-        }
-
-        is_null($key) ? $this->set($array) : $this->set($key, $array);
-
-        return $this->get($key);
-    }
-
     private function find($keyArray, $array)
     {
-        if (is_null($keyArray)) {
-            dump($keyArray);
-            die();
-        }
         if (1 === count($keyArray)) {
             return isset($array[$keyArray[0]]) ? $array[$keyArray[0]] : null;
         }
@@ -260,10 +185,12 @@ class ArrayTool implements \ArrayAccess
     {
         foreach ($array as $k => $v) {
             if (is_array($v)) {
-                $tmp = $prefix == "" ? $k : $prefix . "." . $k;
+                $tmp = $prefix == "" ? $k : $prefix . $this->separator . $k;
                 $this->toList($v, $list, $tmp);
+            } else if (empty($prefix)) {
+                $list[$k] = $v;
             } else {
-                $list[$prefix . "." . $k] = $v;
+                $list[$prefix . $this->separator . $k] = $v;
             }
         }
     }
@@ -271,7 +198,7 @@ class ArrayTool implements \ArrayAccess
     private function toArray($list, &$array = [])
     {
         foreach ($list as $key => $value) {
-            $keyArray = explode(".", $key);
+            $keyArray = explode($this->separator, $key);
             $this->value($keyArray, $value, $array);
         }
     }
