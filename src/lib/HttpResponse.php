@@ -8,6 +8,8 @@
 
 namespace api\tool\lib;
 
+use Psr\Http\Message\MessageInterface;
+
 class HttpResponse
 {
     private $header = [];
@@ -126,6 +128,11 @@ class HttpResponse
         return $this->content;
     }
 
+    /**
+     * @param MessageInterface $response
+     *
+     * @return MessageInterface
+     */
     public function guzzleResponse($response = null)
     {
         if (!is_null($response)) {
