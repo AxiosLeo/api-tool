@@ -131,6 +131,9 @@ class ArrayTool implements \ArrayAccess
         $key0 = $keyArray[0];
         unset($keyArray[0]);
         $keyArray = array_values($keyArray);
+        if (!isset($array[$key0])) {
+            return null;
+        }
         return $this->find($keyArray, $array[$key0]);
     }
 
