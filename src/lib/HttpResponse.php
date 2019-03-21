@@ -8,7 +8,7 @@
 
 namespace api\tool\lib;
 
-use Psr\Http\Message\MessageInterface;
+use Psr\Http\Message\ResponseInterface;
 
 class HttpResponse
 {
@@ -129,9 +129,9 @@ class HttpResponse
     }
 
     /**
-     * @param MessageInterface $response
+     * @param ResponseInterface $response
      *
-     * @return MessageInterface
+     * @return ResponseInterface
      */
     public function guzzleResponse($response = null)
     {
