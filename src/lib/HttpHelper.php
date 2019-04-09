@@ -80,8 +80,8 @@ class HttpHelper
     }
 
     /**
-     * @param string|int $key
-     * @param mixed      $value
+     * @param mixed $key
+     * @param mixed $value
      *
      * @return $this
      */
