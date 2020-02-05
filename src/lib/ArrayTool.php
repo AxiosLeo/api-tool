@@ -45,14 +45,14 @@ class ArrayTool implements \ArrayAccess
                     $this->list = array_merge($this->list, $list);
                 }
             }
-        } else if (is_array($value)) {
+        } elseif (is_array($value)) {
             if (empty($value)) {
                 $this->list[$key] = $value;
             } else {
                 $this->toList($value, $list, $key);
                 $this->list = array_merge($this->list, $list);
             }
-        } else if ($value == null) {
+        } elseif ($value == null) {
             unset($this->list[$key]);
         } else {
             $this->list[$key] = $value;
@@ -194,7 +194,7 @@ class ArrayTool implements \ArrayAccess
             if (is_array($v)) {
                 $tmp = $prefix == "" ? $k : $prefix . $this->separator . $k;
                 $this->toList($v, $list, $tmp);
-            } else if (empty($prefix)) {
+            } elseif (empty($prefix)) {
                 $list[$k] = $v;
             } else {
                 $list[$prefix . $this->separator . $k] = $v;
@@ -214,9 +214,9 @@ class ArrayTool implements \ArrayAccess
     {
         if (!is_array($key)) {
             $array[$key] = $value;
-        } else if (is_array($key) && count($key) === 1) {
+        } elseif (is_array($key) && count($key) === 1) {
             $array[$key[0]] = $value;
-        } else if (is_array($key)) {
+        } elseif (is_array($key)) {
             $key0 = $key[0];
             unset($key[0]);
             $key = array_values($key);

@@ -17,7 +17,8 @@ class Parse
         return json_decode(
             \GuzzleHttp\json_encode(
                 simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA)
-            ), true
+            ),
+            true
         );
     }
 

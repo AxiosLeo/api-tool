@@ -20,7 +20,7 @@ $options = [
 $response = Http::instance($options)
     ->setDomain("https://www.sojson.com")
     ->setMethod('GET')
-    ->setParam('city','北京')
+    ->setParam('city', '北京')
     ->curl("open/api/weather/json.shtml");
 
 dump($response->getData('data.yesterday.date'));
