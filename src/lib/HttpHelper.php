@@ -196,7 +196,7 @@ class HttpHelper
         $response->setHeader($result->getHeaders());
         $content_type = $result->getHeaderLine('Content-Type');
 
-        $body = (string)$body;
+        $body = (string) $body;
         if (false !== strpos($content_type, 'xml')) {
             $body = Parse::xmlToArray($body);
         }
@@ -214,16 +214,14 @@ class HttpHelper
         ksort($param);
         $str = '';
         $n   = 0;
+        $arr = [];
         foreach ($param as $k => $v) {
             if ($this->options['urlencode']) {
                 $v = rawurlencode($v);
             }
-            if ($n) {
-                $str .= '&';
-            }
-            $str .= $k . '=' . $v;
-            ++$n;
+            $arr[$n++] = $k . '=' . $v;
         }
+        \implode('&', $arr);
 
         return $str;
     }
