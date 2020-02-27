@@ -1,10 +1,4 @@
 <?php
-/**
- * @author  : axios
- * @email   : axiosleo@foxmail.com
- * @blog    : http://hanxv.cn
- * @datetime: 2018/7/3 11:51
- */
 
 namespace api\tool;
 
@@ -18,17 +12,16 @@ $options = [
 ];
 
 $response = Http::instance($options)
-    ->setDomain("https://www.sojson.com")
+    ->setDomain('https://www.sojson.com')
     ->setMethod('GET')
     ->setParam('city', '北京')
-    ->curl("open/api/weather/json.shtml");
+    ->curl('open/api/weather/json.shtml');
 
 dump($response->getData('data.yesterday.date'));
 
 //get all data
 dump($response->getContent());
 // or $response->getData();
-
 
 Http::clear();  // clear instance
 

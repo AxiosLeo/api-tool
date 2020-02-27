@@ -28,9 +28,9 @@ class Json extends Response
      *
      * @param mixed $data 要处理的数据
      *
-     * @return mixed
-     *
      * @throws \Exception
+     *
+     * @return mixed
      */
     protected function output($data)
     {
@@ -47,6 +47,7 @@ class Json extends Response
             if ($e->getPrevious()) {
                 throw $e->getPrevious();
             }
+
             throw $e;
         }
     }

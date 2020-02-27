@@ -1,11 +1,4 @@
 <?php
-/**
- * @author  : axios
- *
- * @email   : axiosleo@foxmail.com
- * @blog    : http://hanxv.cn
- * @datetime: 2019-03-19 11:19
- */
 
 namespace api\tool\lib;
 
@@ -51,7 +44,7 @@ class Helper
      */
     private static function sortArray($array, $sortRule = '', $order = 'asc', $save_key = true)
     {
-        if (!is_array($array)) {
+        if (!\is_array($array)) {
             return false;
         }
 
@@ -65,10 +58,8 @@ class Helper
          *              ["book"=>19,"version"=>20]
          *      ];
          */
-        if (is_array($sortRule)) {
-            /*
-             * $sortRule = ['book'=>"asc",'version'=>"asc"];
-             */
+        if (\is_array($sortRule)) {
+            // $sortRule = ['book'=>"asc",'version'=>"asc"];
             usort($array, function ($a, $b) use ($sortRule) {
                 foreach ($sortRule as $sortKey => $order) {
                     if ($a[$sortKey] == $b[$sortKey]) {
@@ -80,7 +71,7 @@ class Helper
 
                 return 0;
             });
-        } elseif (is_string($sortRule)) {
+        } elseif (\is_string($sortRule)) {
             if (!empty($sortRule)) {
                 /*
                  * $sortRule = "book";

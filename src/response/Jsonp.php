@@ -31,9 +31,9 @@ class Jsonp extends Response
      *
      * @param mixed $data 要处理的数据
      *
-     * @return mixed
-     *
      * @throws \Exception
+     *
+     * @return mixed
      */
     protected function output($data)
     {
@@ -48,13 +48,12 @@ class Jsonp extends Response
                 throw new \InvalidArgumentException(json_last_error_msg());
             }
 
-            $data = $handler . '(' . $data . ');';
-
-            return $data;
+            return $handler . '(' . $data . ');';
         } catch (\Exception $e) {
             if ($e->getPrevious()) {
                 throw $e->getPrevious();
             }
+
             throw $e;
         }
     }

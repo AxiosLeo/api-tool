@@ -1,10 +1,4 @@
 <?php
-/**
- * @author  : axios
- * @email   : axiosleo@foxmail.com
- * @blog    : http://hanxv.cn
- * @datetime: 2018/7/2 18:15
- */
 
 namespace api\tool\exception;
 
@@ -16,6 +10,17 @@ class Exception extends \Exception
      * @var array
      */
     protected $data = [];
+
+    /**
+     * 获取异常额外Debug数据
+     * 主要用于输出到异常页面便于调试.
+     *
+     * @return array 由setData设置的Debug数据
+     */
+    final public function getData()
+    {
+        return $this->data;
+    }
 
     /**
      * 设置异常额外的Debug数据
@@ -36,16 +41,5 @@ class Exception extends \Exception
     final protected function setData($label, array $data)
     {
         $this->data[$label] = $data;
-    }
-
-    /**
-     * 获取异常额外Debug数据
-     * 主要用于输出到异常页面便于调试.
-     *
-     * @return array 由setData设置的Debug数据
-     */
-    final public function getData()
-    {
-        return $this->data;
     }
 }

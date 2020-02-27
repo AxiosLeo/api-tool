@@ -1,10 +1,4 @@
 <?php
-/**
- * @author  : axios
- * @email   : axiosleo@foxmail.com
- * @blog    : http://hanxv.cn
- * @datetime: 2018/7/2 17:16
- */
 
 namespace api\tool;
 
@@ -30,7 +24,7 @@ class Http
 
     public static function __callStatic($name, $arguments)
     {
-        return call_user_func_array([self::instance(), $name], $arguments);
+        return \call_user_func_array([self::instance(), $name], $arguments);
     }
 
     /**
@@ -40,7 +34,7 @@ class Http
      */
     public static function instance($options = [])
     {
-        if (is_null(self::$instance)) {
+        if (null === self::$instance) {
             self::$instance = new HttpHelper($options);
         }
 

@@ -1,10 +1,4 @@
 <?php
-/**
- * @author  : axios
- * @email   : axiosleo@foxmail.com
- * @blog    : http://hanxv.cn
- * @datetime: 2018/7/3 11:51
- */
 
 //need composer install
 
@@ -16,7 +10,7 @@
  * @param null $label
  * @param int  $flags
  *
- * @return string|string[]|null
+ * @return null|string|string[]
  */
 function dump($var = null, $echo = true, $label = null, $flags = ENT_SUBSTITUTE)
 {
@@ -24,7 +18,7 @@ function dump($var = null, $echo = true, $label = null, $flags = ENT_SUBSTITUTE)
     ob_start();
     var_dump($var);
     $output = ob_get_clean();
-    $output = preg_replace('/\]\=\>\n(\s+)/m', '] => ', $output);
+    $output = preg_replace('/]=>\n(\s+)/m', '] => ', $output);
     if (!extension_loaded('xdebug')) {
         $output = htmlspecialchars($output, $flags);
     }
@@ -33,9 +27,9 @@ function dump($var = null, $echo = true, $label = null, $flags = ENT_SUBSTITUTE)
         echo $output;
 
         return '';
-    } else {
-        return $output;
     }
+
+    return $output;
 }
 
 require_once __DIR__ . '/../vendor/autoload.php';

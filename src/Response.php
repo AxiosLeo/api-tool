@@ -1,14 +1,8 @@
 <?php
-/**
- * @author  : axios
- * @email   : axiosleo@foxmail.com
- * @blog    : http://hanxv.cn
- * @datetime: 2018/7/2 20:34
- */
 
 namespace api\tool;
 
-use api\tool\lib\ArrayTool;
+use Adbar\Dot;
 use api\tool\lib\Parse;
 use api\tool\response\Json as JsonResponse;
 use api\tool\response\Jsonp as JsonpResponse;
@@ -49,7 +43,7 @@ class Response
     /**
      * @var mixed 输出内容
      */
-    protected $content = null;
+    protected $content;
 
     /**
      * @var array 回调结果
@@ -66,10 +60,16 @@ class Response
      */
     protected static $instance = null;
 
+    public function __construct()
+    {
+        $this->result = new Dot([]);
+        $this->contentType($this->contentType, $this->charset);
+    }
+
     /**
      * @param string $type
      *
-     * @return Response|JsonResponse|XmlResponse|JsonpResponse
+     * @return JsonpResponse|JsonResponse|Response|XmlResponse
      */
     public static function instance($type = 'json')
     {
@@ -85,12 +85,6 @@ class Response
         return self::$instance;
     }
 
-    public function __construct()
-    {
-        $this->result = ArrayTool::instance([]);
-        $this->contentType($this->contentType, $this->charset);
-    }
-
     /**
      * 设置响应头.
      *
@@ -101,7 +95,7 @@ class Response
      */
     public function setHeader($key = '', $value = '')
     {
-        if (is_array($key)) {
+        if (\is_array($key)) {
             $this->header = array_merge($this->header, $key);
         } else {
             $this->header[$key] = $value;
@@ -113,7 +107,7 @@ class Response
     /**
      * 设置请求结果中的数组元素.
      *
-     * @param $key
+     * @param        $key
      * @param string $value
      *
      * @return $this
@@ -128,14 +122,14 @@ class Response
     /**
      * 回调配置.
      *
-     * @param $key
+     * @param        $key
      * @param string $value
      *
      * @return $this
      */
     public function setOptions($key, $value = '')
     {
-        if (is_array($key)) {
+        if (\is_array($key)) {
             $this->options = array_merge($this->options, $key);
         } else {
             $this->options[$key] = $value;
@@ -149,7 +143,6 @@ class Response
      *
      * @param int    $code
      * @param string $msg
-     * @param array  $header
      */
     public function wrong($code = 500, $msg = 'unknown error', array $header = [])
     {
@@ -162,7 +155,6 @@ class Response
      * @param array  $data
      * @param int    $code
      * @param string $msg
-     * @param array  $header
      */
     public function response($data = [], $code = 200, $msg = 'success', array $header = [])
     {
@@ -184,62 +176,14 @@ class Response
     /**
      * 直接回调结果.
      *
-     * @param string|array|null $data
+     * @param null|array|string $data
      */
     public function result($data = null)
     {
-        if (is_null($data)) {
+        if (null === $data) {
             $this->data = $this->result->get();
         }
         $this->send($data);
-    }
-
-    /**
-     * 发送数据到客户端.
-     *
-     * @param $data
-     *
-     * @throws \InvalidArgumentException
-     */
-    protected function send($data = [])
-    {
-        $this->data($data);
-
-        $data = $this->getContent();
-
-        if (!headers_sent() && !empty($this->header)) {
-            // 发送状态码
-            http_response_code($this->code);
-            // 发送头部信息
-            foreach ($this->header as $name => $val) {
-                if (is_null($val)) {
-                    header($name);
-                } else {
-                    header($name . ':' . $val);
-                }
-            }
-        }
-
-        echo $data;
-
-        if (function_exists('fastcgi_finish_request')) {
-            // 提高页面响应
-            fastcgi_finish_request();
-        }
-
-        self::$instance = null;
-    }
-
-    /**
-     * 处理数据.
-     *
-     * @param mixed $data 要处理的数据
-     *
-     * @return mixed
-     */
-    protected function output($data)
-    {
-        return $data;
     }
 
     /**
@@ -257,20 +201,6 @@ class Response
     }
 
     /**
-     * 输出数据设置.
-     *
-     * @param mixed $data 输出数据
-     *
-     * @return $this
-     */
-    protected function data($data)
-    {
-        $this->data = $data;
-
-        return $this;
-    }
-
-    /**
      * 设置页面输出内容.
      *
      * @param $content
@@ -279,12 +209,12 @@ class Response
      */
     public function content($content)
     {
-        if (null !== $content && !is_string($content) && !is_numeric($content) && !is_callable([
-                $content,
-                '__toString',
-            ])
+        if (null !== $content && !\is_string($content) && !is_numeric($content) && !\is_callable([
+            $content,
+            '__toString',
+        ])
         ) {
-            throw new \InvalidArgumentException(sprintf('variable type error： %s', gettype($content)));
+            throw new \InvalidArgumentException(sprintf('variable type error： %s', \gettype($content)));
         }
 
         $this->content = (string) $content;
@@ -374,9 +304,9 @@ class Response
     {
         if (!empty($name)) {
             return isset($this->header[$name]) ? $this->header[$name] : null;
-        } else {
-            return $this->header;
         }
+
+        return $this->header;
     }
 
     /**
@@ -399,12 +329,12 @@ class Response
         if (null == $this->content) {
             $content = $this->output($this->data);
 
-            if (null !== $content && !is_string($content) && !is_numeric($content) && !is_callable([
-                    $content,
-                    '__toString',
-                ])
+            if (null !== $content && !\is_string($content) && !is_numeric($content) && !\is_callable([
+                $content,
+                '__toString',
+            ])
             ) {
-                throw new \InvalidArgumentException(sprintf('variable type error： %s', gettype($content)));
+                throw new \InvalidArgumentException(sprintf('variable type error： %s', \gettype($content)));
             }
 
             $this->content = (string) $content;
@@ -421,5 +351,67 @@ class Response
     public function getCode()
     {
         return $this->code;
+    }
+
+    /**
+     * 发送数据到客户端.
+     *
+     * @param $data
+     *
+     * @throws \InvalidArgumentException
+     */
+    protected function send($data = [])
+    {
+        $this->data($data);
+
+        $data = $this->getContent();
+
+        if (!headers_sent() && !empty($this->header)) {
+            // 发送状态码
+            http_response_code($this->code);
+            // 发送头部信息
+            foreach ($this->header as $name => $val) {
+                if (null === $val) {
+                    header($name);
+                } else {
+                    header($name . ':' . $val);
+                }
+            }
+        }
+
+        echo $data;
+
+        if (\function_exists('fastcgi_finish_request')) {
+            // 提高页面响应
+            fastcgi_finish_request();
+        }
+
+        self::$instance = null;
+    }
+
+    /**
+     * 处理数据.
+     *
+     * @param mixed $data 要处理的数据
+     *
+     * @return mixed
+     */
+    protected function output($data)
+    {
+        return $data;
+    }
+
+    /**
+     * 输出数据设置.
+     *
+     * @param mixed $data 输出数据
+     *
+     * @return $this
+     */
+    protected function data($data)
+    {
+        $this->data = $data;
+
+        return $this;
     }
 }

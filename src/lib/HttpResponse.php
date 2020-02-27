@@ -1,13 +1,8 @@
 <?php
-/**
- * @author  : axios
- * @email   : axiosleo@foxmail.com
- * @blog    : http://hanxv.cn
- * @datetime: 2018/7/2 17:52
- */
 
 namespace api\tool\lib;
 
+use Adbar\Dot;
 use Psr\Http\Message\ResponseInterface;
 
 class HttpResponse
@@ -23,12 +18,12 @@ class HttpResponse
     private $body;
 
     /**
-     * @var integer
+     * @var int
      */
     private $status;
 
     /**
-     * @var ArrayTool
+     * @var Dot
      */
     private $data;
 
@@ -106,16 +101,15 @@ class HttpResponse
 
     /**
      * @param string $key
-     * @param string $separator 分隔符 用于方便查询子节点
      *
      * @return array
      */
-    public function getData($key = null, $separator = '.')
+    public function getData($key = null)
     {
-        $content = is_null($this->content) ? $this->getContent() : $this->content;
-        if (is_null($this->data)) {
-            if (is_array($content)) {
-                $this->data = ArrayTool::instance($content, $separator);
+        $content = null === $this->content ? $this->getContent() : $this->content;
+        if (null === $this->data) {
+            if (\is_array($content)) {
+                $this->data = new Dot($content);
             } else {
                 $this->data = $this->body;
             }
@@ -125,20 +119,20 @@ class HttpResponse
     }
 
     /**
-     * @return array|ArrayTool|string
+     * @return array|Dot|string
      */
     public function getContent()
     {
-        if (is_null($this->data)) {
-            if (is_object($this->body)) {
+        if (null === $this->data) {
+            if (\is_object($this->body)) {
                 $this->content = Parse::objectToArray($this->body);
             }
 
-            if (is_string($this->body)) {
+            if (\is_string($this->body)) {
                 $this->content = Parse::jsonToArray($this->body);
             }
 
-            if (!is_array($this->content)) {
+            if (!\is_array($this->content)) {
                 $this->content = $this->body;
             }
         }
@@ -153,9 +147,10 @@ class HttpResponse
      */
     public function guzzleResponse($response = null)
     {
-        if (!is_null($response)) {
+        if (null !== $response) {
             $this->response = $response;
         }
+
         return $this->response;
     }
 }

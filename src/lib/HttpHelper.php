@@ -1,13 +1,8 @@
 <?php
-/**
- * @author  : axios
- * @email   : axiosleo@foxmail.com
- * @blog    : http://hanxv.cn
- * @datetime: 2018/7/2 17:18
- */
 
 namespace api\tool\lib;
 
+use Adbar\Dot;
 use api\tool\Http;
 use GuzzleHttp\Client;
 
@@ -33,11 +28,9 @@ class HttpHelper
 
     public function __construct($options)
     {
-        $options         = array_merge($this->options, $options);
-        $this->separator = $options['separator'];
-        $this->options   = ArrayTool::instance($options, $this->separator);
-        $this->separator = $this->options['separator'];
-        $this->param     = ArrayTool::instance([], $this->separator);
+        $options       = array_merge($this->options, $options);
+        $this->options = new Dot($options);
+        $this->param   = new Dot([]);
     }
 
     /**
@@ -52,7 +45,7 @@ class HttpHelper
             $this->setOption('headers', []);
         }
 
-        if (is_array($header_name)) {
+        if (\is_array($header_name)) {
             $this->options['headers'] = array_merge($this->options['headers'], $header_name);
         } else {
             $this->options['headers' . $this->separator . $header_name] = $header_content;
@@ -153,8 +146,6 @@ class HttpHelper
      * @param array  $data
      *
      * @return HttpResponse
-     *
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function curl($path = '', $data = [])
     {
@@ -221,7 +212,7 @@ class HttpHelper
             }
             $arr[$n++] = $k . '=' . $v;
         }
-        \implode('&', $arr);
+        implode('&', $arr);
 
         return $str;
     }

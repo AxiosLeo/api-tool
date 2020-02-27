@@ -59,7 +59,7 @@ class Xml extends Response
      */
     protected function xmlEncode($data, $root, $item, $attr, $id, $encoding)
     {
-        if (is_array($attr)) {
+        if (\is_array($attr)) {
             $array = [];
             foreach ($attr as $key => $value) {
                 $array[] = "{$key}=\"{$value}\"";
@@ -94,7 +94,7 @@ class Xml extends Response
                 $key         = $item;
             }
             $xml .= "<{$key}{$attr}>";
-            $xml .= (is_array($val) || is_object($val)) ? $this->dataToXml($val, $item, $id) : $val;
+            $xml .= (\is_array($val) || \is_object($val)) ? $this->dataToXml($val, $item, $id) : $val;
             $xml .= "</{$key}>";
         }
 
