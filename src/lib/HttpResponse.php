@@ -12,16 +12,34 @@ use Psr\Http\Message\ResponseInterface;
 
 class HttpResponse
 {
+    /**
+     * @var array
+     */
     private $header = [];
 
+    /**
+     * @var string
+     */
     private $body;
 
+    /**
+     * @var integer
+     */
     private $status;
 
+    /**
+     * @var ArrayTool
+     */
     private $data;
 
+    /**
+     * @var mixed
+     */
     private $content;
 
+    /**
+     * @var ResponseInterface
+     */
     private $response;
 
     /**
@@ -103,7 +121,7 @@ class HttpResponse
             }
         }
 
-        return is_object($this->data) ? $this->data->get($key) : $this->data;
+        return $this->data->get($key);
     }
 
     /**

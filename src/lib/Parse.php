@@ -32,7 +32,7 @@ class Parse
     public static function jsonToArray($json)
     {
         $temp = json_decode($json, true);
-        if (empty($temp) && $json != $temp) {
+        if (null === $temp && $json != $temp) {
             return $json;
         }
 
