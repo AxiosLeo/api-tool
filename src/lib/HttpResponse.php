@@ -102,7 +102,7 @@ class HttpResponse
     /**
      * @param string $key
      *
-     * @return array
+     * @return array|string
      */
     public function getData($key = null)
     {
@@ -115,7 +115,7 @@ class HttpResponse
             }
         }
 
-        return $this->data->get($key);
+        return ($this->data instanceof Dot) ? $this->data->get($key) : $this->data;
     }
 
     /**
