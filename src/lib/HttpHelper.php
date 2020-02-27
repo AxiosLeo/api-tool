@@ -24,8 +24,6 @@ class HttpHelper
 
     private $param;
 
-    private $separator;
-
     public function __construct($options)
     {
         $options       = array_merge($this->options, $options);
@@ -48,7 +46,7 @@ class HttpHelper
         if (\is_array($header_name)) {
             $this->options['headers'] = array_merge($this->options['headers'], $header_name);
         } else {
-            $this->options['headers' . $this->separator . $header_name] = $header_content;
+            $this->options->set('headers.' . $header_name, $header_content);
         }
 
         return $this;
