@@ -1,6 +1,6 @@
 <?php
 
-declare (strict_types = 1);
+declare(strict_types=1);
 
 namespace api\tool\models;
 
@@ -18,9 +18,9 @@ class GuzzleOption extends Model
     public ?array $auth = [];
 
     /**
-     * @var mixed|null|\Psr\Http\Message\StreamInterface|resource
+     * @var null|mixed|\Psr\Http\Message\StreamInterface|resource
      */
-    public $body = null;
+    public $body;
 
     public ?array $cert = null;
 
@@ -31,16 +31,16 @@ class GuzzleOption extends Model
     public ?bool $debug = false;
 
     /**
-     * @var mixed|false|string 'gzip'
+     * @var false|mixed|string 'gzip'
      */
     public $decode_content = true;
 
     public ?float $delay = 0;
 
     /**
-     * @var bool|integer default 1048576
+     * @var bool|int default 1048576
      */
-    public $expect = null;
+    public $expect;
 
     public ?array $form_params = null;
 
@@ -57,24 +57,24 @@ class GuzzleOption extends Model
     public ?\Closure $on_stats = null;
 
     /**
-     * @var string|array
+     * @var array|string
      */
-    public $proxy = null;
+    public $proxy;
 
     /**
-     * @var string|array
+     * @var array|string
      */
-    public $query = null;
+    public $query;
 
     /**
-     * @var mixed|null|\Psr\Http\Message\StreamInterface|resource
+     * @var null|mixed|\Psr\Http\Message\StreamInterface|resource
      */
-    public $sink = null;
+    public $sink;
 
     /**
-     * @var string|array
+     * @var array|string
      */
-    public $ssl_key = null;
+    public $ssl_key;
 
     public ?bool $stream = false;
 
@@ -83,7 +83,7 @@ class GuzzleOption extends Model
     /**
      * @var bool|string
      */
-    public $verify = null;
+    public $verify;
 
     public ?float $timeout = 30;
 

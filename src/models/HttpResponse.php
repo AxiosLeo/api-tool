@@ -1,6 +1,6 @@
 <?php
 
-declare (strict_types = 1);
+declare(strict_types=1);
 
 namespace api\tool\models;
 
@@ -13,7 +13,7 @@ class HttpResponse extends Model
     public ?ResponseInterface $guzzle_response = null;
 
     /**
-     * @var string|StreamInterface|resource
+     * @var resource|StreamInterface|string
      */
     public $body;
 

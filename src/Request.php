@@ -6,5 +6,4 @@ use tpr\core\request\DefaultRequest;
 
 class Request extends DefaultRequest
 {
-
 }

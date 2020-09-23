@@ -9,7 +9,6 @@ use GuzzleHttp\Client;
 
 /**
  * Class Http.
- *
  */
 class Http
 {
@@ -25,6 +24,7 @@ class Http
         if (!empty($config)) {
             $this->options->unmarshall($config);
         }
+
         return $this->options;
     }
 
@@ -34,6 +34,7 @@ class Http
             $this->options->form_params = [];
         }
         $this->options->form_params[$key] = $value;
+
         return $this;
     }
 
@@ -43,12 +44,14 @@ class Http
             $this->options->headers = [];
         }
         $this->options->headers[$key] = $value;
+
         return $this;
     }
 
     public function setBody($body)
     {
         $this->options->body = $body;
+
         return $this;
     }
 
@@ -76,19 +79,20 @@ class Http
 
         $response->headers = $result->getHeaders();
         $content_type      = $result->getHeaderLine('Content-Type');
-        $response->content = (string)$body;
+        $response->content = (string) $body;
 
-        $mimes = new \Mimey\MimeTypes;
+        $mimes = new \Mimey\MimeTypes();
 
         $response->content_type = $mimes->getExtension($content_type);
-        if ($response->content_type === 'xml') {
+        if ('xml' === $response->content_type) {
             $response->data = Parse::xmlToArray($response->content);
-        } else if ($response->content_type === 'json') {
+        } elseif ('json' === $response->content_type) {
             $response->data = Parse::jsonToArray($response->content);
         }
         $response->body   = $body;
         $response->status = $result->getStatusCode();
         unset($result, $mimes);
+
         return $response;
     }
 }
