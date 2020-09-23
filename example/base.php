@@ -1,7 +1,5 @@
 <?php
 
-//need composer install
-
 /**
  * 数据打印或输出.
  *

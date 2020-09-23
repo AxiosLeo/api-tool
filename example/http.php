@@ -12,25 +12,12 @@ $options = [
 ];
 
 $response = Http::instance($options)
-    ->setDomain('https://www.sojson.com')
+    ->setDomain('http://example.com/')
     ->setMethod('GET')
-    ->setParam('city', '北京')
-    ->curl('open/api/weather/json.shtml');
-
-dump($response->getData('data.yesterday.date'));
+    ->curl();
 
 //get all data
 dump($response->getContent());
 // or $response->getData();
 
-Http::clear();  // clear instance
-
-//OR
-/*
-Http::instance($options);
-Http::setHeader([]);
-Http::setDomain("https://www.sojson.com");
-Http::setMethod('GET');
-Http::setParam('city','北京');
-$response = Http::curl("open/api/weather/json.shtml");
-*/
+Http::clear(); // clear instance
