@@ -2,47 +2,93 @@
 
 namespace api\tool;
 
-use api\tool\lib\HttpHelper;
-use api\tool\lib\HttpResponse;
+use api\tool\lib\Parse;
+use api\tool\models\GuzzleOption;
+use api\tool\models\HttpResponse;
+use GuzzleHttp\Client;
 
 /**
  * Class Http.
  *
- * @method $this        setHeader($header_name, $header_content = '') static
- * @method $this        setParam($key, $value = null)                 static
- * @method mixed        getParam()                                    static
- * @method $this        setOption($key, $value = '')                  static
- * @method mixed        getOption()                                   static
- * @method $this        setMethod($method)                            static
- * @method $this        setDomain($domain)                            static
- * @method $this        setFormat($format)                            static
- * @method HttpResponse curl($path = '', $data = [])                  static
  */
 class Http
 {
-    private static $instance;
+    private GuzzleOption $options;
 
-    public static function __callStatic($name, $arguments)
+    public function __construct($options = [])
     {
-        return \call_user_func_array([self::instance(), $name], $arguments);
+        $this->options = new GuzzleOption($options);
     }
 
-    /**
-     * @param array $options
-     *
-     * @return HttpHelper
-     */
-    public static function instance($options = [])
+    public function configuration(array $config = [])
     {
-        if (null === self::$instance) {
-            self::$instance = new HttpHelper($options);
+        if (!empty($config)) {
+            $this->options->unmarshall($config);
         }
-
-        return self::$instance;
+        return $this->options;
     }
 
-    public static function clear()
+    public function addParam($key, $value)
     {
-        self::$instance = null;
+        if (null === $this->options->form_params) {
+            $this->options->form_params = [];
+        }
+        $this->options->form_params[$key] = $value;
+        return $this;
+    }
+
+    public function addHeader($key, $value)
+    {
+        if (null === $this->options->headers) {
+            $this->options->headers = [];
+        }
+        $this->options->headers[$key] = $value;
+        return $this;
+    }
+
+    public function setBody($body)
+    {
+        $this->options->body = $body;
+        return $this;
+    }
+
+    public function setDomain($domain)
+    {
+        if (0 !== strpos($domain, 'http://') && 0 !== strpos($domain, 'https://')) {
+            $domain = 'http://' . $domain;
+        }
+        $this->options->base_uri = $domain;
+
+        return $this;
+    }
+
+    public function send($path = '', $method = 'GET')
+    {
+        $client = new Client($this->options->toArray());
+
+        $result = $client->request(strtoupper($method), $path);
+        unset($client);
+
+        $body     = $result->getBody();
+        $response = new HttpResponse();
+
+        $response->guzzle_response = $result;
+
+        $response->headers = $result->getHeaders();
+        $content_type      = $result->getHeaderLine('Content-Type');
+        $response->content = (string)$body;
+
+        $mimes = new \Mimey\MimeTypes;
+
+        $response->content_type = $mimes->getExtension($content_type);
+        if ($response->content_type === 'xml') {
+            $response->data = Parse::xmlToArray($response->content);
+        } else if ($response->content_type === 'json') {
+            $response->data = Parse::jsonToArray($response->content);
+        }
+        $response->body   = $body;
+        $response->status = $result->getStatusCode();
+        unset($result, $mimes);
+        return $response;
     }
 }

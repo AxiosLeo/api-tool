@@ -2,7 +2,8 @@
 
 namespace api\tool;
 
-require_once __DIR__ . '/base.php';
+require_once __DIR__ . '/../vendor/autoload.php';
+
 $options = [
     'http_errors'     => false,
     'connect_timeout' => 30,
@@ -11,13 +12,10 @@ $options = [
     'format'          => 'array',  //array|json|xml
 ];
 
-$response = Http::instance($options)
-    ->setDomain('http://example.com/')
-    ->setMethod('GET')
-    ->curl();
+$http     = new Http($options);
+$response = $http->setDomain('http://example.com/')
+    ->send('', 'GET');
 
 //get all data
-dump($response->getContent());
+dump($response->content);
 // or $response->getData();
-
-Http::clear(); // clear instance
